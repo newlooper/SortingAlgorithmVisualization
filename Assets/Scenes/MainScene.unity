@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 45
   m_Viewport: {fileID: 549836205}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 638211023}
@@ -2569,6 +2569,10 @@ MonoBehaviour:
     - m_Text: Bubble
       m_Image: {fileID: 0}
     - m_Text: Quick
+      m_Image: {fileID: 0}
+    - m_Text: Cocktail
+      m_Image: {fileID: 0}
+    - m_Text: OddEven
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
