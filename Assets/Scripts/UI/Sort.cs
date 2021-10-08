@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
@@ -14,30 +15,42 @@ namespace UI
         {
             if ( GameManager.Numbers.Length < 2 ) return;
             GameObject.Find( "Gen" ).GetComponent<Button>().enabled = false;
+
+            PrintArray( GameManager.Numbers, " <- Original" ); // log original array
+
             var algDropdown = GameObject.Find( "Algorithm" ).GetComponent<Dropdown>();
             var className   = algDropdown.options[algDropdown.value].text;
-            PrintArray( GameManager.Numbers );
-            CallSortByClassName( className, GameManager.Numbers );
-            PrintArray( GameManager.Numbers );
+
+            var cloneForPureSort = GameManager.Numbers.Clone() as int[];
+            var sortOnly = new Thread( () =>
+            {
+                CallSortByClassName( "Sorting.Algorithm." + className, cloneForPureSort );
+                PrintArray( cloneForPureSort, " <- After pure sorting" );
+            } );
+            sortOnly.Start(); // sort only for testing real performance of current algorithm
+
+            CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
+            PrintArray( GameManager.Numbers, " <- After visual sorting" );
             StartCoroutine( CubeController.Play() );
         }
 
-        private static void PrintArray( IEnumerable<int> arr )
+
+        private static void PrintArray( IEnumerable<int> arr, string postfix = "", string prefix = "" )
         {
             var sb = new StringBuilder();
 
             foreach ( var i in arr )
             {
                 sb.Append( i );
-                sb.Append( ", " );
+                sb.Append( " " );
             }
 
-            Debug.Log( sb.ToString() );
+            Debug.Log( prefix + sb + postfix );
         }
 
         private static void CallSortByClassName( string classname, IEnumerable numbers )
         {
-            var type = Type.GetType( "Sorting." + classname );
+            var type = Type.GetType( classname );
             var func = type.GetMethod( "Sort",
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static );
             func.Invoke( null, new object[] {numbers} );
