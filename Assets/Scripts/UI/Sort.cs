@@ -15,6 +15,8 @@ namespace UI
         {
             if ( GameManager.Numbers.Length < 2 ) return;
             GameObject.Find( "Gen" ).GetComponent<Button>().enabled = false;
+            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = false;
+            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = false;
 
             PrintArray( GameManager.Numbers, " <- Original" ); // log original array
 
@@ -29,13 +31,21 @@ namespace UI
             } );
             sortOnly.Start(); // sort only for testing real performance of current algorithm
 
+            PerformanceQueue.Rewind.Clear();
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
             PrintArray( GameManager.Numbers, " <- After visual sorting" );
             StartCoroutine( CubeController.Play() );
         }
 
+        public void Rewind()
+        {
+            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = false;
+            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = false;
+            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = false;
+            StartCoroutine( CubeController.Rewind() );
+        }
 
-        private static void PrintArray( IEnumerable<int> arr, string postfix = "", string prefix = "" )
+        public static void PrintArray( IEnumerable<int> arr, string postfix = "", string prefix = "" )
         {
             var sb = new StringBuilder();
 

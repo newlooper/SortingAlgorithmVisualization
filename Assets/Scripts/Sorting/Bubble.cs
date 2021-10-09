@@ -15,6 +15,7 @@
                     {
                         step.Snapshot = arr.Clone() as int[];
                         ( arr[j], arr[j + 1] ) = ( arr[j + 1], arr[j] );
+                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], j, j + 1 ) );
                     }
 
                     PerformanceQueue.Course.Enqueue( step );

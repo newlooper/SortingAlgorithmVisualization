@@ -25,6 +25,8 @@
                     step.Snapshot = arr.Clone() as int[];
                     // if the pots are in the wrong order, he switches them.
                     ( arr[index], arr[index - 1] ) = ( arr[index - 1], arr[index] );
+
+                    PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], index, index - 1 ) );
                     index--;
                 }
 

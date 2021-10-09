@@ -15,6 +15,7 @@
                     {
                         step.Snapshot = arr.Clone() as int[];
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
+                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + 1 ) );
                         sorted = false;
                     }
 
@@ -28,7 +29,7 @@
                     {
                         step.Snapshot = arr.Clone() as int[];
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
-
+                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + 1 ) );
                         sorted = false;
                     }
 

@@ -30,6 +30,8 @@
                 var step = new PerformanceQueue.Step( numbers.Clone() as int[], cursorLeft, cursorRight );
 
                 ( numbers[cursorLeft], numbers[cursorRight] ) = ( numbers[cursorRight], numbers[cursorLeft] );
+
+                PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( numbers.Clone() as int[], cursorLeft, cursorRight ) );
                 PerformanceQueue.Course.Enqueue( step );
             }
 

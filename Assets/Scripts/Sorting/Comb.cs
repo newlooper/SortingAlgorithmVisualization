@@ -39,6 +39,7 @@
                         // Swap
                         ( arr[i], arr[i + gap] ) = ( arr[i + gap], arr[i] );
 
+                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + gap ) );
                         swapped = true;
                     }
 
