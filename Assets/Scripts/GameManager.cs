@@ -4,10 +4,12 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public         GameObject       cubeContainer;
-    public         Slider           min;
-    public         Slider           max;
-    public         Slider           count;
+    public GameObject cubeContainer;
+    public Slider     min;
+    public Slider     max;
+    public Slider     count;
+    public GameObject space;
+    public GameObject spaceCopy;
 
     public static List<GameObject> Cubes { get; private set; } = new List<GameObject>();
 
@@ -15,18 +17,19 @@ public class GameManager : MonoBehaviour
 
     public void GenObjects()
     {
-        foreach ( var obj in Cubes )
-        {
-            Destroy( obj );
-        }
-        
         Numbers = GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value );
+        GenObjectsFromArray( Numbers );
+    }
 
-        Cubes = new List<GameObject>( Numbers.Length );
-        for ( var i = 0; i < Numbers.Length; i++ )
+    public void GenObjectsFromArray( int[] arr )
+    {
+        Destroy( GameObject.Find( "Space(Clone)" ) );
+        var parent = Instantiate( space );
+        Cubes = new List<GameObject>( arr.Length );
+        for ( var i = 0; i < arr.Length; i++ )
         {
-            var cube = Instantiate( cubeContainer, new Vector3( i * 1.5f, 0f, 0f ), Quaternion.identity );
-            cube.GetComponent<CubeController>().SetValue( Numbers[i] );
+            var cube = Instantiate( cubeContainer, new Vector3( i * 1.5f, 0f, 0f ), Quaternion.identity, parent.transform );
+            cube.GetComponent<CubeController>().SetValue( arr[i] );
             Cubes.Add( cube );
         }
     }
