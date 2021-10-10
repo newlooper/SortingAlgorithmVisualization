@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Pace = Performance.PerformanceQueue.Pace;
 
 namespace Performance
 {
     public partial class CubeController
     {
-        private static IEnumerator HighlightWithIndex( int left, int right, PerformanceQueue.Step step )
+        private static IEnumerator HighlightTwoWithIndex( int left, int right, PerformanceQueue.Step step )
         {
             var cubes        = GameManager.Cubes;
             var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );

@@ -4,21 +4,25 @@ using UnityEngine;
 
 namespace Performance
 {
-    public static class PerformanceQueue
+    public static partial class PerformanceQueue
     {
         public static readonly ConcurrentQueue<Step> Course = new ConcurrentQueue<Step>();
         public static readonly Stack<Step>           Rewind = new Stack<Step>();
 
-        public class Step
+        public partial class Step
         {
+            private Step()
+            {
+            }
+
             public Step( int[] snapshot, int left, int right )
             {
                 Left = left;
                 Right = right;
                 Snapshot = snapshot;
-                PerformanceEffect = snapshot == null ? PerformanceEffect.Selected : PerformanceEffect.Swap;
+                PerformanceEffect = snapshot == null ? PerformanceEffect.SelectTwo : PerformanceEffect.Swap;
 
-                Pace = new CubeController.Pace(
+                Pace = new Pace(
                     Resources.Load<Material>( "Materials/CubeSelected" ),
                     Resources.Load<Material>( "Materials/CubeInMoving" ) );
             }
@@ -49,14 +53,38 @@ namespace Performance
 
             public PerformanceEffect PerformanceEffect { get; set; }
 
-            public CubeController.Pace Pace { get; set; }
+            public Pace Pace { get; set; }
         }
 
         public enum PerformanceEffect
         {
             Swap,
-            Selected,
+            SelectOne,
+            SelectTwo,
+            NewMin,
+            ChangeSelection,
+            UnSelectOne,
             Copy,
+        }
+
+        public class Pace
+        {
+            public Pace( Material selectedMaterial, Material movingMaterial )
+            {
+                SelectedMaterial = selectedMaterial;
+                MovingMaterial = movingMaterial;
+            }
+
+            public Pace( Vector3 target, Material movingMaterial )
+            {
+                Target = target;
+                MovingMaterial = movingMaterial;
+            }
+
+            public Vector3 Target { get; set; }
+
+            public Material MovingMaterial   { get; set; }
+            public Material SelectedMaterial { get; set; }
         }
     }
 }

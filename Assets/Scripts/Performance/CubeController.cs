@@ -44,16 +44,27 @@ namespace Performance
             {
                 switch ( step.PerformanceEffect )
                 {
-                    case PerformanceQueue.PerformanceEffect.Selected:
-                        yield return HighlightWithIndex( step.Left, step.Right, step );
+                    case PerformanceQueue.PerformanceEffect.SelectTwo:
+                        yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         break;
                     case PerformanceQueue.PerformanceEffect.Swap:
-                        yield return HighlightWithIndex( step.Left, step.Right, step );
+                        yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         yield return SwapWithIndex( step.Left, step.Right, step );
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
-
+                    case PerformanceQueue.PerformanceEffect.SelectOne:
+                        yield return HighlightOneWithIndex( step.Left, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.UnSelectOne:
+                        yield return HighlightOneWithIndex( step.Left, step, 0 );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.ChangeSelection:
+                        yield return HighlightSelectionWithIndex( step.Left, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.NewMin:
+                        yield return HighlightChange( step.Left, step.Right, step );
+                        break;
                     case PerformanceQueue.PerformanceEffect.Copy:
                         break;
                     default:
@@ -101,7 +112,7 @@ namespace Performance
             go.transform.Find( "Cube" ).transform.Find( "Pillar" ).GetComponent<MeshRenderer>().material = mat;
         }
 
-        private static IEnumerator Move( GameObject from, Pace[] paces )
+        private static IEnumerator Move( GameObject from, PerformanceQueue.Pace[] paces )
         {
             foreach ( var pace in paces )
             {
@@ -112,26 +123,6 @@ namespace Performance
                     yield return 0;
                 }
             }
-        }
-
-        public class Pace
-        {
-            public Pace( Material selectedMaterial, Material movingMaterial )
-            {
-                SelectedMaterial = selectedMaterial;
-                MovingMaterial = movingMaterial;
-            }
-
-            public Pace( Vector3 target, Material movingMaterial )
-            {
-                Target = target;
-                MovingMaterial = movingMaterial;
-            }
-
-            public Vector3 Target { get; set; }
-
-            public Material MovingMaterial   { get; set; }
-            public Material SelectedMaterial { get; set; }
         }
     }
 }
