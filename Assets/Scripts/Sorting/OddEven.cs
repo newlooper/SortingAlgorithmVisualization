@@ -1,4 +1,6 @@
-﻿namespace Sorting
+﻿using Performance;
+
+namespace Sorting
 {
     public class OddEven
     {

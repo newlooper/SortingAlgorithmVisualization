@@ -1,0 +1,137 @@
+using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Performance
+{
+    public partial class CubeController : MonoBehaviour
+    {
+        private static CubeController _instance;
+        private static Slider         _speed;
+        private static Slider         _progress;
+
+        private void Awake()
+        {
+            _instance = this;
+            _speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
+            _progress = GameObject.Find( "Progress" ).GetComponent<Slider>();
+        }
+
+        public void SetButtonText( string str )
+        {
+            var buttons = GetComponentsInChildren<Button>();
+            foreach ( var btn in buttons )
+            {
+                btn.GetComponentInChildren<Text>().text = str;
+            }
+        }
+
+        public void SetValue( int value )
+        {
+            transform.Find( "Cube" ).transform.localScale = new Vector3( 1, value / 2f, 1 );
+            SetButtonText( value.ToString() );
+        }
+
+        public static IEnumerator Play()
+        {
+            _progress.minValue = 0;
+            _progress.maxValue = PerformanceQueue.Rewind.Count;
+            _progress.value = 0;
+            _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+
+            while ( PerformanceQueue.Course.TryDequeue( out var step ) )
+            {
+                switch ( step.PerformanceEffect )
+                {
+                    case PerformanceQueue.PerformanceEffect.Selected:
+                        yield return HighlightWithIndex( step.Left, step.Right, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.Swap:
+                        yield return HighlightWithIndex( step.Left, step.Right, step );
+                        yield return SwapWithIndex( step.Left, step.Right, step );
+                        _progress.value++;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+                        break;
+
+                    case PerformanceQueue.PerformanceEffect.Copy:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            // _progress.interactable = true;
+
+            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = true;
+            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = true;
+            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = true;
+        }
+
+        public static IEnumerator Rewind()
+        {
+            while ( PerformanceQueue.Rewind.Count > 0 )
+            {
+                var step = PerformanceQueue.Rewind.Pop();
+
+                switch ( step.PerformanceEffect )
+                {
+                    case PerformanceQueue.PerformanceEffect.Swap:
+                        yield return SwapWithIndex( step.Right, step.Left, step );
+                        ( GameManager.Numbers[step.Left], GameManager.Numbers[step.Right] ) =
+                            ( GameManager.Numbers[step.Right], GameManager.Numbers[step.Left] );
+                        _progress.value--;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+                        break;
+                    case PerformanceQueue.PerformanceEffect.Copy:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = true;
+            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = true;
+            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = true;
+        }
+
+
+        private static void SetPillarMaterial( GameObject go, Material mat )
+        {
+            go.transform.Find( "Cube" ).transform.Find( "Pillar" ).GetComponent<MeshRenderer>().material = mat;
+        }
+
+        private static IEnumerator Move( GameObject from, Pace[] paces )
+        {
+            foreach ( var pace in paces )
+            {
+                SetPillarMaterial( from, pace.MovingMaterial );
+                while ( from.transform.position != pace.Target )
+                {
+                    from.transform.position = Vector3.MoveTowards( from.transform.position, pace.Target, _speed.value * Time.deltaTime );
+                    yield return 0;
+                }
+            }
+        }
+
+        public class Pace
+        {
+            public Pace( Material selectedMaterial, Material movingMaterial )
+            {
+                SelectedMaterial = selectedMaterial;
+                MovingMaterial = movingMaterial;
+            }
+
+            public Pace( Vector3 target, Material movingMaterial )
+            {
+                Target = target;
+                MovingMaterial = movingMaterial;
+            }
+
+            public Vector3 Target { get; set; }
+
+            public Material MovingMaterial   { get; set; }
+            public Material SelectedMaterial { get; set; }
+        }
+    }
+}
