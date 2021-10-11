@@ -51,7 +51,7 @@ namespace Performance
                         yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         break;
                     case PerformanceQueue.PerformanceEffect.Swap:
-                        yield return HighlightTwoWithIndex( step.Left, step.Right, step );
+                        // yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         yield return SwapWithIndex( step.Left, step.Right, step );
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();

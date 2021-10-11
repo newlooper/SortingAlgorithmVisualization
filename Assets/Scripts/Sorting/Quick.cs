@@ -29,6 +29,7 @@ namespace Sorting
                     break;
                 }
 
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
                 PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );
                 ( numbers[cursorLeft], numbers[cursorRight] ) = ( numbers[cursorRight], numbers[cursorLeft] );
                 PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );

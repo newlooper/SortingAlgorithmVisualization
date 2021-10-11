@@ -15,7 +15,7 @@ namespace Performance
             GameManager.Cubes[from].SetActive( false );
             Image.Enqueue( cloneFrom );
             yield return Move( cloneFrom, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
-            yield return new WaitForSeconds( 1f / _speed.value );
+            // yield return new WaitForSeconds( 1f / _speed.value );
         }
 
         private static IEnumerator JumpIn( int from, int to, PerformanceQueue.Step step )
@@ -27,7 +27,7 @@ namespace Performance
                 Destroy( cloneFrom );
                 SetPillarMaterial( GameManager.Cubes[from], Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
                 GameManager.Cubes[from].SetActive( true );
-                yield return new WaitForSeconds( 1f / _speed.value );
+                // yield return new WaitForSeconds( 1f / _speed.value );
             }
         }
 
