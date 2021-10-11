@@ -11,16 +11,14 @@ namespace Sorting
             {
                 for ( var j = 0; j < n - i - 1; j++ )
                 {
-                    var step = new PerformanceQueue.Step( null, j, j + 1 );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( j, j + 1 ) );
 
                     if ( arr[j] > arr[j + 1] )
                     {
-                        step.Snapshot = arr.Clone() as int[];
+                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], j, j + 1 ) );
                         ( arr[j], arr[j + 1] ) = ( arr[j + 1], arr[j] );
-                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], j, j + 1 ) );
+                        PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], j, j + 1 ) );
                     }
-
-                    PerformanceQueue.Course.Enqueue( step );
                 }
             }
         }

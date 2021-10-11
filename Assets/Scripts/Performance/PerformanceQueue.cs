@@ -15,41 +15,40 @@ namespace Performance
             {
             }
 
-            public Step( int[] snapshot, int left, int right )
+            public static Step CreateStepForSelectTwo( int left, int right )
             {
-                Left = left;
-                Right = right;
-                Snapshot = snapshot;
-                PerformanceEffect = snapshot == null ? PerformanceEffect.SelectTwo : PerformanceEffect.Swap;
-
-                Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelected" ),
-                    Resources.Load<Material>( "Materials/CubeInMoving" ) );
+                var step = new Step
+                {
+                    Left = left,
+                    Right = right,
+                    PerformanceEffect = PerformanceEffect.SelectTwo,
+                    Pace = new Pace(
+                        Resources.Load<Material>( "Materials/CubeSelected" ),
+                        null )
+                };
+                return step;
             }
 
-            public Step( int[] snapshot, int left, int right, PerformanceEffect performanceEffect )
+            public static Step CreateStepForSwap( int[] snapshot, int left, int right )
             {
-                Left = left;
-                Right = right;
-                Snapshot = snapshot;
-                PerformanceEffect = performanceEffect;
+                var step = new Step
+                {
+                    Left = left,
+                    Right = right,
+                    Snapshot = snapshot,
+                    PerformanceEffect = PerformanceEffect.Swap,
+                    Pace = new Pace(
+                        Resources.Load<Material>( "Materials/CubeSelected" ),
+                        Resources.Load<Material>( "Materials/CubeInMoving" ) )
+                };
+                return step;
             }
 
             public int Left { get; set; }
 
             public int Right { get; set; }
 
-            private int[] _snapshot;
-
-            public int[] Snapshot
-            {
-                get => _snapshot;
-                set
-                {
-                    PerformanceEffect = PerformanceEffect.Swap;
-                    _snapshot = value;
-                }
-            }
+            public int[] Snapshot { get; set; }
 
             public PerformanceEffect PerformanceEffect { get; set; }
 
@@ -64,7 +63,9 @@ namespace Performance
             NewMin,
             ChangeSelection,
             UnSelectOne,
-            Copy,
+            JumpOut,
+            JumpIn,
+            SwapCopy,
         }
 
         public class Pace

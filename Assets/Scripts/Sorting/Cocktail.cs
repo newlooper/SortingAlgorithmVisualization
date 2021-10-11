@@ -21,16 +21,14 @@ namespace Sorting
                 // the bubble sort
                 for ( var i = start; i < end - 1; ++i )
                 {
-                    var step = new PerformanceQueue.Step( null, i, i + 1 );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + 1 ) );
                     if ( arr[i] > arr[i + 1] )
                     {
-                        step.Snapshot = arr.Clone() as int[];
+                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
-                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + 1 ) );
+                        PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
                         swapped = true;
                     }
-
-                    PerformanceQueue.Course.Enqueue( step );
                 }
 
                 // if nothing moved, then array is sorted.
@@ -49,16 +47,15 @@ namespace Sorting
                 // same comparison as in the previous stage
                 for ( var i = end - 1; i >= start; i-- )
                 {
-                    var step = new PerformanceQueue.Step( null, i, i + 1 );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + 1 ) );
                     if ( arr[i] > arr[i + 1] )
                     {
-                        step.Snapshot = arr.Clone() as int[];
+                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
+
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
-                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + 1 ) );
+                        PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
                         swapped = true;
                     }
-
-                    PerformanceQueue.Course.Enqueue( step );
                 }
 
                 // increase the starting point, because

@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
         Cubes = new List<GameObject>( arr.Length );
         for ( var i = 0; i < arr.Length; i++ )
         {
-            var cube = Instantiate( cubeContainer, new Vector3( i * 1.5f, 0f, 0f ), Quaternion.identity, parent.transform );
+            var cube = Instantiate( cubeContainer, new Vector3( i * CubeController.Gap, 0f, 0f ), Quaternion.identity, parent.transform );
             cube.GetComponent<CubeController>().SetValue( arr[i] );
             Cubes.Add( cube );
         }

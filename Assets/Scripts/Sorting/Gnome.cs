@@ -16,7 +16,8 @@ namespace Sorting
                     index++; // he steps forward
                 }
 
-                var step = new PerformanceQueue.Step( null, index, index - 1 );
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( index, index - 1 ) );
+
                 // if the pots next to the gnome are in the correct order...
                 if ( arr[index] >= arr[index - 1] )
                 {
@@ -24,15 +25,12 @@ namespace Sorting
                 }
                 else
                 {
-                    step.Snapshot = arr.Clone() as int[];
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index, index - 1 ) );
                     // if the pots are in the wrong order, he switches them.
                     ( arr[index], arr[index - 1] ) = ( arr[index - 1], arr[index] );
-
-                    PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], index, index - 1 ) );
+                    PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index, index - 1 ) );
                     index--;
                 }
-
-                PerformanceQueue.Course.Enqueue( step );
             }
         }
 

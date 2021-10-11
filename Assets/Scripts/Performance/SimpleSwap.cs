@@ -77,8 +77,8 @@ namespace Performance
         {
             return Move( mvObj, new[]
             {
-                new Pace( mvObj.transform.position + new Vector3( 0, 0, 1.5f ), pace.MovingMaterial ),
-                new Pace( target + new Vector3( 0, 0, 1.5f ), pace.MovingMaterial ),
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, Gap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, Gap ), pace.MovingMaterial ),
                 new Pace( target, pace.MovingMaterial ),
             } );
         }
@@ -87,8 +87,8 @@ namespace Performance
         {
             return Move( mvObj, new[]
             {
-                new Pace( mvObj.transform.position + new Vector3( 0, 0, -1.5f ), pace.MovingMaterial ),
-                new Pace( target + new Vector3( 0, 0, -1.5f ), pace.MovingMaterial ),
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, -Gap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, -Gap ), pace.MovingMaterial ),
                 new Pace( target, pace.MovingMaterial ),
             } );
         }

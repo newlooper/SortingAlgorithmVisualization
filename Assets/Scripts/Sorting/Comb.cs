@@ -34,18 +34,15 @@ namespace Sorting
                 // Compare all elements with current gap 
                 for ( var i = 0; i < length - gap; i++ )
                 {
-                    var step = new PerformanceQueue.Step( null, i, i + gap );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + gap ) );
                     if ( arr[i] > arr[i + gap] )
                     {
-                        step.Snapshot = arr.Clone() as int[];
+                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
                         // Swap
                         ( arr[i], arr[i + gap] ) = ( arr[i + gap], arr[i] );
-
-                        PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, i + gap ) );
+                        PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
                         swapped = true;
                     }
-
-                    PerformanceQueue.Course.Enqueue( step );
                 }
             }
         }

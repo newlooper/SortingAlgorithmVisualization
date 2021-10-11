@@ -11,11 +11,14 @@ namespace Performance
         private static Slider         _speed;
         private static Slider         _progress;
 
+        public static float Gap { get; set; }
+
         private void Awake()
         {
             _instance = this;
             _speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
             _progress = GameObject.Find( "Progress" ).GetComponent<Slider>();
+            Gap = 1.5f;
         }
 
         public void SetButtonText( string str )
@@ -65,7 +68,16 @@ namespace Performance
                     case PerformanceQueue.PerformanceEffect.NewMin:
                         yield return HighlightChange( step.Left, step.Right, step );
                         break;
-                    case PerformanceQueue.PerformanceEffect.Copy:
+                    case PerformanceQueue.PerformanceEffect.JumpOut:
+                        yield return JumpOut( step.Left, step.Right, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.JumpIn:
+                        yield return JumpIn( step.Left, step.Right, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.SwapCopy:
+                        yield return SwapCopy( step.Left, step.Right, step );
+                        _progress.value++;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -94,7 +106,7 @@ namespace Performance
                         _progress.value--;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
-                    case PerformanceQueue.PerformanceEffect.Copy:
+                    case PerformanceQueue.PerformanceEffect.JumpOut:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

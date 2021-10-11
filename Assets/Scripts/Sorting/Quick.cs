@@ -15,26 +15,23 @@ namespace Sorting
             {
                 while ( numbers[++cursorLeft] < middleValue )
                 {
-                    PerformanceQueue.Course.Enqueue( new PerformanceQueue.Step( null, cursorLeft, right ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, right ) );
                 }
 
                 while ( numbers[--cursorRight] > middleValue )
                 {
-                    PerformanceQueue.Course.Enqueue( new PerformanceQueue.Step( null, cursorLeft, cursorRight ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
                 }
 
                 if ( cursorLeft >= cursorRight )
                 {
-                    PerformanceQueue.Course.Enqueue( new PerformanceQueue.Step( null, cursorLeft, cursorRight ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
                     break;
                 }
 
-                var step = new PerformanceQueue.Step( numbers.Clone() as int[], cursorLeft, cursorRight );
-
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );
                 ( numbers[cursorLeft], numbers[cursorRight] ) = ( numbers[cursorRight], numbers[cursorLeft] );
-
-                PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( numbers.Clone() as int[], cursorLeft, cursorRight ) );
-                PerformanceQueue.Course.Enqueue( step );
+                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );
             }
 
             QuickSort( numbers, left, cursorLeft - 1 );

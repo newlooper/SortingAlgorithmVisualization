@@ -31,11 +31,10 @@ namespace Sorting
                     continue;
                 }
 
-                PerformanceQueue.Course.Enqueue( new PerformanceQueue.Step( arr.Clone() as int[], i, min ) );
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, min ) );
                 // swap the found minimum element with the first element
                 ( arr[min], arr[i] ) = ( arr[i], arr[min] );
-
-                PerformanceQueue.Rewind.Push( new PerformanceQueue.Step( arr.Clone() as int[], i, min ) );
+                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, min ) );
             }
         }
     }
