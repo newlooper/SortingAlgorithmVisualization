@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
         _cubeContainer = AssetDatabase.LoadAssetAtPath<GameObject>( "Assets/Prefabs/CubeContainer.prefab" );
     }
 
-    public static List<GameObject> Cubes { get; private set; } = new List<GameObject>();
+    public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
 
     public static int[] Numbers { get; private set; } = { };
 
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         Destroy( GameObject.Find( "Space(Clone)" ) );
 
         var parent = Instantiate( _space );
-        Cubes = new List<GameObject>( arr.Length );
+        Cubes = new MyList<GameObject>( arr.Length );
         for ( var i = 0; i < arr.Length; i++ )
         {
             var cube = Instantiate( _cubeContainer, new Vector3( i * CubeController.Gap, 0f, 0f ), Quaternion.identity, parent.transform );
@@ -60,5 +60,48 @@ public class GameManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public class MyList<T>
+    {
+        private static List<T> _list = new List<T>();
+
+        public MyList( int length )
+        {
+            _list = new List<T>( length );
+        }
+
+        public MyList()
+        {
+            _list = new List<T>();
+        }
+
+        public void Add( T obj )
+        {
+            _list.Add( obj );
+        }
+
+        public void Swap( int firstIndex, int secondIndex )
+        {
+            if ( firstIndex == secondIndex ) return;
+
+            var left  = firstIndex < secondIndex ? firstIndex : secondIndex;
+            var right = firstIndex > secondIndex ? firstIndex : secondIndex;
+
+            var leftElement  = _list[left];
+            var rightElement = _list[right];
+
+            _list.RemoveAt( right );
+            _list.Insert( right, leftElement );
+            
+            _list.RemoveAt( left );
+            _list.Insert( left, rightElement );
+        }
+
+        public T this[ int index ]
+        {
+            get => _list[index];
+            set => _list[index] = value;
+        }
     }
 }

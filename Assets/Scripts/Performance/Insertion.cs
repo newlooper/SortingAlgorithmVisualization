@@ -8,25 +8,22 @@ namespace Performance
     {
         private static readonly ConcurrentQueue<GameObject> Image = new ConcurrentQueue<GameObject>();
 
-        private static IEnumerator JumpOut( int from, int to, PerformanceQueue.Step step )
+        private static IEnumerator JumpOut( int from, PerformanceQueue.Step step )
         {
-            var cloneFrom = Instantiate( GameManager.Cubes[from] );
-            var target    = new Vector3( to * Gap, 0, 0 ) + new Vector3( 0, 0, -1f );
-            GameManager.Cubes[from].SetActive( false );
-            Image.Enqueue( cloneFrom );
-            yield return Move( cloneFrom, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
+            var cube   = GameManager.Cubes[from];
+            var target = cube.transform.position + new Vector3( 0, 0, -1f );
+            Image.Enqueue( cube );
+            yield return Move( cube, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
 
-        private static IEnumerator JumpIn( int from, int to, PerformanceQueue.Step step )
+        private static IEnumerator JumpIn( PerformanceQueue.Step step )
         {
-            if ( Image.TryDequeue( out var cloneFrom ) )
+            if ( Image.TryDequeue( out var cube ) )
             {
-                var target = GameManager.Cubes[to].transform.position;
-                yield return Move( cloneFrom, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
-                Destroy( cloneFrom );
-                SetPillarMaterial( GameManager.Cubes[from], Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
-                GameManager.Cubes[from].SetActive( true );
+                var target = cube.transform.position + new Vector3( 0, 0, 1f );
+                yield return Move( cube, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
+                SetPillarMaterial( cube, Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
                 // yield return new WaitForSeconds( DefaultDelay / _speed.value );
             }
         }
@@ -36,50 +33,31 @@ namespace Performance
             var cubes      = GameManager.Cubes;
             var cubeSorted = Resources.Load<Material>( "Materials/CubeSelectedBlue" );
 
-            //////////////////////////////
-            /// 克隆本应该被移动的两个对象，该时刻的信息完全一致
-            var leftClone  = Instantiate( cubes[left].gameObject, cubes[left].transform.position, Quaternion.identity );
-            var rightClone = Instantiate( cubes[right].gameObject, cubes[right].transform.position, Quaternion.identity );
+            ////////////////////////////////
+            /// 交换 List 中的元素位置
+            GameManager.Cubes.Swap( left, right );
 
-            ////////////////////////////
-            /// 移动克隆的对象之前隐藏原始对象
-            cubes[left].SetActive( false );
-            cubes[right].SetActive( false );
-
-            ////////////////////////////
-            /// 交换原始对象的显示数值，虽然交换，但暂时不可见
-            var tmp = step.Snapshot[left];
-            cubes[left].GetComponent<CubeController>().SetValue( step.Snapshot[right] );
-            cubes[right].GetComponent<CubeController>().SetValue( tmp );
-
+            ////////////////////
+            // 绑定移动前的固定位置
+            var newLeft  = cubes[left].gameObject.transform.position + new Vector3( Gap, 0, 0 );
+            var newRight = cubes[right].gameObject.transform.position + new Vector3( -Gap, 0, 0 );
+            
             ////////////
-            /// 用克隆对象展示移动效果
-            Image.TryPeek( out var cloneFrom );
-            _instance.StartCoroutine( Move( cloneFrom, new[]
+            /// 展示移动效果
+            _instance.StartCoroutine( Move( cubes[right].gameObject, new[]
             {
-                new PerformanceQueue.Pace( cloneFrom.transform.position + new Vector3( -Gap, 0, 0 ),
+                new PerformanceQueue.Pace( newRight,
                     Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
             } ) );
-
-            _instance.StartCoroutine( Move( leftClone, new[]
+            yield return Move( cubes[left].gameObject, new[]
             {
-                new PerformanceQueue.Pace( cubes[right].transform.position, step.Pace.MovingMaterial )
-            } ) );
-            yield return Move( rightClone, new[]
-            {
-                new PerformanceQueue.Pace( cubes[left].transform.position, step.Pace.MovingMaterial )
+                new PerformanceQueue.Pace( newLeft, step.Pace.MovingMaterial )
             } );
 
-            Destroy( leftClone ); // 展示完效果就销毁
-            Destroy( rightClone ); // 展示完效果就销毁
-
             ////////////
-            /// 移动效果完成，恢复原始对象的显示
+            /// 移动效果完成，撤销移动样式
             SetPillarMaterial( cubes[left], cubeSorted );
             SetPillarMaterial( cubes[right], cubeSorted );
-
-            cubes[left].SetActive( true );
-            // cubes[right].SetActive( true );
         }
     }
 
@@ -98,24 +76,21 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForJumpOut( int from, int to )
+            public static Step CreateStepForJumpOut( int from )
             {
                 var step = new Step
                 {
                     Left = from,
-                    Right = to,
                     PerformanceEffect = PerformanceEffect.JumpOut,
                     Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
                 };
                 return step;
             }
 
-            public static Step CreateStepForJumpIn( int from, int to )
+            public static Step CreateStepForJumpIn()
             {
                 var step = new Step
                 {
-                    Left = from,
-                    Right = to,
                     PerformanceEffect = PerformanceEffect.JumpIn,
                     Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
                 };

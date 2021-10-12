@@ -71,10 +71,10 @@ namespace Performance
                         yield return HighlightChange( step.Left, step.Right, step );
                         break;
                     case PerformanceQueue.PerformanceEffect.JumpOut:
-                        yield return JumpOut( step.Left, step.Right, step );
+                        yield return JumpOut( step.Left, step );
                         break;
                     case PerformanceQueue.PerformanceEffect.JumpIn:
-                        yield return JumpIn( step.Left, step.Right, step );
+                        yield return JumpIn( step );
                         break;
                     case PerformanceQueue.PerformanceEffect.SwapCopy:
                         yield return SwapCopy( step.Left, step.Right, step );
