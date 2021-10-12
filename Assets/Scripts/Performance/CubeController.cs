@@ -11,7 +11,8 @@ namespace Performance
         private static Slider         _speed;
         private static Slider         _progress;
 
-        public static float Gap { get; set; }
+        public static  float Gap          { get; set; }
+        private static float DefaultDelay { get; set; }
 
         private void Awake()
         {
@@ -19,6 +20,7 @@ namespace Performance
             _speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
             _progress = GameObject.Find( "Progress" ).GetComponent<Slider>();
             Gap = 1.5f;
+            DefaultDelay = 1f;
         }
 
         public void SetButtonText( string str )
@@ -79,6 +81,16 @@ namespace Performance
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
+                    case PerformanceQueue.PerformanceEffect.Auxiliary:
+                        yield return SimpleMove( step.Left, step.Right, step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.AuxiliaryBack:
+                        yield return AuxiliaryBack( step );
+                        break;
+                    case PerformanceQueue.PerformanceEffect.MergeHistory:
+                        _progress.value++;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -106,7 +118,10 @@ namespace Performance
                         _progress.value--;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
-                    case PerformanceQueue.PerformanceEffect.JumpOut:
+                    case PerformanceQueue.PerformanceEffect.MergeHistory:
+                        yield return MergeRewind( step );
+                        _progress.value--;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

@@ -3197,6 +3197,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Insertion
       m_Image: {fileID: 0}
+    - m_Text: MergeBottomUp
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3525,12 +3527,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76a99f7b49b502a45b340828df2b74aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeContainer: {fileID: 7993920257115567819, guid: 1ae0bbaa8488cc24ca459d01b0bf9c38, type: 3}
   min: {fileID: 1851620495}
   max: {fileID: 385782357}
   count: {fileID: 1777806944}
-  space: {fileID: 483434174717600844, guid: 349174692c661c441b9e31512b921615, type: 3}
-  spaceCopy: {fileID: 7706475711317020591, guid: cfca4eda5bab3bd459216a010a006076, type: 3}
 --- !u!4 &1648576763
 Transform:
   m_ObjectHideFlags: 0

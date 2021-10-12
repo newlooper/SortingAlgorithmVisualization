@@ -66,6 +66,9 @@ namespace Performance
             JumpOut,
             JumpIn,
             SwapCopy,
+            Auxiliary,
+            AuxiliaryBack,
+            MergeHistory,
         }
 
         public class Pace

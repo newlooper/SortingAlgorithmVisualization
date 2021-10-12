@@ -14,7 +14,7 @@ namespace Performance
 
             SetPillarMaterial( cubes[left], cubeSelected );
             SetPillarMaterial( cubes[right], cubeSelected );
-            yield return new WaitForSeconds( 1f / _speed.value );
+            yield return new WaitForSeconds( DefaultDelay / _speed.value );
 
             SetPillarMaterial( cubes[left], cubeDefault );
             SetPillarMaterial( cubes[right], cubeDefault );

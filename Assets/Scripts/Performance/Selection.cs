@@ -27,7 +27,7 @@ namespace Performance
                 SetPillarMaterial( cubes[index - 1], cubeDefault );
             }
 
-            yield return new WaitForSeconds( 1f / _speed.value );
+            yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
 
         private static IEnumerator HighlightChange( int oldMin, int newMin, PerformanceQueue.Step step )
@@ -39,7 +39,7 @@ namespace Performance
             SetPillarMaterial( cubes[oldMin], cubeDefault );
             SetPillarMaterial( cubes[newMin], cubeSelected );
 
-            yield return new WaitForSeconds( 1f / _speed.value );
+            yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
     }
 

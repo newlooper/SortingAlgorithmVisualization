@@ -1,16 +1,23 @@
 using System.Collections.Generic;
 using Performance;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject cubeContainer;
-    public Slider     min;
-    public Slider     max;
-    public Slider     count;
-    public GameObject space;
-    public GameObject spaceCopy;
+    public         Slider     min;
+    public         Slider     max;
+    public         Slider     count;
+    private static GameObject _space;
+    private static GameObject _cubeContainer;
+
+    private void Awake()
+    {
+        _space = AssetDatabase.LoadAssetAtPath<GameObject>( "Assets/Prefabs/Space.prefab" );
+        _cubeContainer = AssetDatabase.LoadAssetAtPath<GameObject>( "Assets/Prefabs/CubeContainer.prefab" );
+    }
 
     public static List<GameObject> Cubes { get; private set; } = new List<GameObject>();
 
@@ -18,18 +25,19 @@ public class GameManager : MonoBehaviour
 
     public void GenObjects()
     {
-        Numbers = GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value );
-        GenObjectsFromArray( Numbers );
+        GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
     }
 
-    public void GenObjectsFromArray( int[] arr )
+    public static void GenObjectsFromArray( int[] arr )
     {
+        Numbers = arr;
         Destroy( GameObject.Find( "Space(Clone)" ) );
-        var parent = Instantiate( space );
+
+        var parent = Instantiate( _space );
         Cubes = new List<GameObject>( arr.Length );
         for ( var i = 0; i < arr.Length; i++ )
         {
-            var cube = Instantiate( cubeContainer, new Vector3( i * CubeController.Gap, 0f, 0f ), Quaternion.identity, parent.transform );
+            var cube = Instantiate( _cubeContainer, new Vector3( i * CubeController.Gap, 0f, 0f ), Quaternion.identity, parent.transform );
             cube.GetComponent<CubeController>().SetValue( arr[i] );
             Cubes.Add( cube );
         }
