@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Performance;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -15,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _space = AssetDatabase.LoadAssetAtPath<GameObject>( "Assets/Prefabs/Space.prefab" );
-        _cubeContainer = AssetDatabase.LoadAssetAtPath<GameObject>( "Assets/Prefabs/CubeContainer.prefab" );
+        _space = Resources.Load<GameObject>( "Prefabs/Space" );
+        _cubeContainer = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
     }
 
     public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
