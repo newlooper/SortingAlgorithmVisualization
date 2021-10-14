@@ -53,7 +53,6 @@ namespace Performance
                         yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         break;
                     case PerformanceQueue.PerformanceEffect.Swap:
-                        // yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                         yield return SwapWithIndex( step.Left, step.Right, step );
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
@@ -91,6 +90,11 @@ namespace Performance
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
+                    case PerformanceQueue.PerformanceEffect.SwapHeap:
+                        yield return SwapHeapWithIndex( step.Left, step.Right, step );
+                        _progress.value++;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -123,6 +127,13 @@ namespace Performance
                         _progress.value--;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
+                    case PerformanceQueue.PerformanceEffect.SwapHeap:
+                        yield return SwapHeapWithIndex( step.Right, step.Left, step );
+                        ( GameManager.Numbers[step.Left], GameManager.Numbers[step.Right] ) =
+                            ( GameManager.Numbers[step.Right], GameManager.Numbers[step.Left] );
+                        _progress.value--;
+                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -143,11 +154,18 @@ namespace Performance
         {
             foreach ( var pace in paces )
             {
+                var speed = _speed.value;
+                if ( pace.Speed != 0 )
+                {
+                    speed = pace.Speed;
+                }
+
                 SetPillarMaterial( from, pace.MovingMaterial );
+
                 while ( from.transform.position != pace.Target )
                 {
-                    from.transform.position = Vector3.MoveTowards( from.transform.position, pace.Target, _speed.value * Time.deltaTime );
-                    yield return 0;
+                    from.transform.position = Vector3.MoveTowards( from.transform.position, pace.Target, speed * Time.deltaTime );
+                    yield return null;
                 }
             }
         }

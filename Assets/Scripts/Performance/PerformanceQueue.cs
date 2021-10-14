@@ -44,6 +44,21 @@ namespace Performance
                 return step;
             }
 
+            public static Step CreateStepForSwapHeap( int[] snapshot, int left, int right )
+            {
+                var step = new Step
+                {
+                    Left = left,
+                    Right = right,
+                    Snapshot = snapshot,
+                    PerformanceEffect = PerformanceEffect.SwapHeap,
+                    Pace = new Pace(
+                        Resources.Load<Material>( "Materials/CubeSelected" ),
+                        Resources.Load<Material>( "Materials/CubeInMoving" ) )
+                };
+                return step;
+            }
+
             public int Left { get; set; }
 
             public int Right { get; set; }
@@ -69,6 +84,7 @@ namespace Performance
             Auxiliary,
             AuxiliaryBack,
             MergeHistory,
+            SwapHeap,
         }
 
         public class Pace
@@ -85,10 +101,18 @@ namespace Performance
                 MovingMaterial = movingMaterial;
             }
 
+            public Pace( Vector3 target, Material movingMaterial, float speed = 0 )
+            {
+                Target = target;
+                MovingMaterial = movingMaterial;
+                Speed = speed;
+            }
+
             public Vector3 Target { get; set; }
 
-            public Material MovingMaterial   { get; set; }
-            public Material SelectedMaterial { get; set; }
+            public Material MovingMaterial     { get; set; }
+            public Material SelectedMaterial   { get; set; }
+            public float    Speed              { get; set; }
         }
     }
 }

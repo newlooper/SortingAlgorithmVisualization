@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Performance;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using Slider = UnityEngine.UI.Slider;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
 
     public void GenObjects()
     {
+        Destroy( GameObject.Find( "TreeContainer(Clone)" ) );
+        CompleteBinaryTree.List.Clear();
         GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
     }
 
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
 
     public class MyList<T>
     {
-        private static List<T> _list = new List<T>();
+        private readonly List<T> _list;
 
         public MyList( int length )
         {
@@ -80,6 +82,13 @@ public class GameManager : MonoBehaviour
             _list.Add( obj );
         }
 
+        public void Clear()
+        {
+            _list.Clear();
+        }
+
+        public int Count => _list.Count;
+
         public void Swap( int firstIndex, int secondIndex )
         {
             if ( firstIndex == secondIndex ) return;
@@ -92,7 +101,7 @@ public class GameManager : MonoBehaviour
 
             _list.RemoveAt( right );
             _list.Insert( right, leftElement );
-            
+
             _list.RemoveAt( left );
             _list.Insert( left, rightElement );
         }

@@ -39,20 +39,24 @@ namespace Performance
 
             ////////////////////
             // 绑定移动前的固定位置
-            var newLeft  = cubes[left].gameObject.transform.position + new Vector3( Gap, 0, 0 );
-            var newRight = cubes[right].gameObject.transform.position + new Vector3( -Gap, 0, 0 );
-            
+            var newLeft  = cubes[left].transform.position + new Vector3( Gap, 0, 0 );
+            var newRight = cubes[right].transform.position + new Vector3( -Gap, 0, 0 );
+
             ////////////
             /// 展示移动效果
-            _instance.StartCoroutine( Move( cubes[right].gameObject, new[]
+            var nodeA = Move( cubes[right].gameObject, new[]
             {
-                new PerformanceQueue.Pace( newRight,
-                    Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
-            } ) );
-            yield return Move( cubes[left].gameObject, new[]
+                new PerformanceQueue.Pace( newRight, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+            } );
+            var nodeB = Move( cubes[left].gameObject, new[]
             {
                 new PerformanceQueue.Pace( newLeft, step.Pace.MovingMaterial )
             } );
+            _instance.StartCoroutine( nodeA );
+            _instance.StartCoroutine( nodeB );
+
+            while ( nodeA.MoveNext() | nodeB.MoveNext() )
+                yield return null;
 
             ////////////
             /// 移动效果完成，撤销移动样式
