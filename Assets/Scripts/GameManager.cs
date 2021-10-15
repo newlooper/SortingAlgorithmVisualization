@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour
         _cubeContainer = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
     }
 
+    private void Start()
+    {
+        GenObjects();
+    }
+
     public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
 
     public static int[] Numbers { get; private set; } = { };
@@ -28,6 +33,7 @@ public class GameManager : MonoBehaviour
         Destroy( GameObject.Find( "TreeContainer(Clone)" ) );
         CompleteBinaryTree.List.Clear();
         GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
+        // GameObject.Find( "Main Camera" ).transform.LookAt( Cubes[Cubes.Count / 2].transform );
     }
 
     public static void GenObjectsFromArray( int[] arr )
@@ -69,6 +75,7 @@ public class GameManager : MonoBehaviour
         GameObject.Find( "Gen" ).GetComponent<Button>().interactable = enable;
         GameObject.Find( "Sort" ).GetComponent<Button>().interactable = enable;
         GameObject.Find( "Rewind" ).GetComponent<Button>().interactable = enable;
+        GameObject.Find( "Algorithm" ).GetComponent<Dropdown>().interactable = enable;
     }
 
     public class MyList<T>
