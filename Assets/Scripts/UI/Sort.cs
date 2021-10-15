@@ -11,6 +11,8 @@ namespace UI
 {
     public class Sort : MonoBehaviour
     {
+        public static string className;
+
         public void DoSort()
         {
             if ( GameManager.Numbers.Length < 2 ) return;
@@ -20,7 +22,7 @@ namespace UI
             PrintArray( GameManager.Numbers, " <- Original" ); // log original array
 
             var algDropdown = GameObject.Find( "Algorithm" ).GetComponent<Dropdown>();
-            var className   = algDropdown.options[algDropdown.value].text;
+            className = algDropdown.options[algDropdown.value].text;
 
             var cloneForPureSort = GameManager.Numbers.Clone() as int[];
             var sortOnly = new Thread( () =>
@@ -34,6 +36,7 @@ namespace UI
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
             PrintArray( GameManager.Numbers, " <- After visual sorting" );
             StartCoroutine( CubeController.Play() );
+            CodeDictionary.isPlaying = true;
         }
 
         public void Rewind()

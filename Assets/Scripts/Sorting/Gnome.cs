@@ -10,6 +10,7 @@ namespace Sorting
 
             while ( index < length )
             {
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
                 // if there is no pot next to the gnome, he is done.
                 if ( index == 0 ) // if the gnome is at the start of the line...
                 {

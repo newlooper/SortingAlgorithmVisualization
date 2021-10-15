@@ -12,6 +12,7 @@ namespace Sorting
 
             while ( swapped )
             {
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
                 // reset the swapped flag on entering the
                 // loop, because it might be true from a
                 // previous iteration.
@@ -21,6 +22,7 @@ namespace Sorting
                 // the bubble sort
                 for ( var i = start; i < end - 1; ++i )
                 {
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
                     PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + 1 ) );
                     if ( arr[i] > arr[i + 1] )
                     {
@@ -47,10 +49,11 @@ namespace Sorting
                 // same comparison as in the previous stage
                 for ( var i = end - 1; i >= start; i-- )
                 {
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + 1 ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + 1, "Selected2" ) );
                     if ( arr[i] > arr[i + 1] )
                     {
-                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
+                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1, "Swap2" ) );
 
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
                         PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );

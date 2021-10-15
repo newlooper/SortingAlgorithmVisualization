@@ -4,44 +4,48 @@ namespace Sorting
 {
     public static class Quick
     {
-        public static void QuickSort( int[] numbers, int left, int right )
+        public static void QuickSort( int[] arr, int left, int right )
         {
             if ( left >= right ) return;
 
-            var middleValue = numbers[( left + right ) / 2];
+            var middleValue = arr[( left + right ) / 2];
             var cursorLeft  = left - 1;
             var cursorRight = right + 1;
             while ( true )
             {
-                while ( numbers[++cursorLeft] < middleValue )
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "Selected" ) );
+                while ( arr[++cursorLeft] < middleValue )
                 {
                     PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, right ) );
                 }
 
-                while ( numbers[--cursorRight] > middleValue )
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "Selected2" ) );
+                while ( arr[--cursorRight] > middleValue )
                 {
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected2" ) );
                 }
 
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "IF" ) );
                 if ( cursorLeft >= cursorRight )
                 {
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected3" ) );
                     break;
                 }
 
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight ) );
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );
-                ( numbers[cursorLeft], numbers[cursorRight] ) = ( numbers[cursorRight], numbers[cursorLeft] );
-                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( numbers.Clone() as int[], cursorLeft, cursorRight ) );
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected4" ) );
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], cursorLeft, cursorRight ) );
+                ( arr[cursorLeft], arr[cursorRight] ) = ( arr[cursorRight], arr[cursorLeft] );
+                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], cursorLeft, cursorRight ) );
             }
 
-            QuickSort( numbers, left, cursorLeft - 1 );
-            QuickSort( numbers, cursorRight + 1, right );
+            QuickSort( arr, left, cursorLeft - 1 );
+            QuickSort( arr, cursorRight + 1, right );
         }
 
-        public static void Sort( int[] numbers )
+        public static void Sort( int[] arr )
         {
-            QuickSort( numbers, 0, numbers.Length - 1 );
+            QuickSort( arr, 0, arr.Length - 1 );
         }
     }
 }

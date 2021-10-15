@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: CubeSelected
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-  m_LightmapFlags: 2
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -84,7 +84,7 @@ Material:
     - _OutlineThreshold: 500
     - _OutlineWidth: 2
     - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 1
+    - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1
     - _SoftParticlesNearFadeDistance: 0
@@ -95,7 +95,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0.7921569, g: 0.5147392, b: 0.19999997, a: 1}
+    - _Color: {r: 1, g: 1, b: 0, a: 1}
     - _EmissionColor: {r: 1, g: 0.31734234, b: 0.109803915, a: 1}
     - _OutColor: {r: 0, g: 0, b: 1, a: 1}
     - _OutlineColor: {r: 0.8396226, g: 0.28968108, b: 0.28968108, a: 1}

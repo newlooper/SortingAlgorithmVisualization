@@ -12,8 +12,10 @@ namespace Performance
         {
             var cube   = GameManager.Cubes[from];
             var target = cube.transform.position + new Vector3( 0, 0, -1f );
+            CodeDictionary.AddMarkLine( step.CodeLineKey );
             Image.Enqueue( cube );
             yield return Move( cube, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
+            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
 
@@ -42,6 +44,7 @@ namespace Performance
             var newLeft  = cubes[left].transform.position + new Vector3( Gap, 0, 0 );
             var newRight = cubes[right].transform.position + new Vector3( -Gap, 0, 0 );
 
+            CodeDictionary.AddMarkLine( step.CodeLineKey );
             ////////////
             /// 展示移动效果
             var nodeA = Move( cubes[right].gameObject, new[]
@@ -62,6 +65,7 @@ namespace Performance
             /// 移动效果完成，撤销移动样式
             SetPillarMaterial( cubes[left], cubeSorted );
             SetPillarMaterial( cubes[right], cubeSorted );
+            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
     }
 
@@ -69,23 +73,27 @@ namespace Performance
     {
         public partial class Step
         {
-            public static Step CreateStepForSorted( int index )
+            public static Step CreateStepForCompare( int index, string key = "Compare" )
             {
                 var step = new Step
                 {
                     Left = index,
                     PerformanceEffect = PerformanceEffect.SelectOne,
-                    Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelectedBlue" ), null )
+                    CodeLineKey = key,
+                    Pace = new Pace(
+                        Resources.Load<Material>( "Materials/CubeSelected" ),
+                        Resources.Load<Material>( "Materials/CubeSelectedBlue" ) )
                 };
                 return step;
             }
 
-            public static Step CreateStepForJumpOut( int from )
+            public static Step CreateStepForJumpOut( int from, string key = "For" )
             {
                 var step = new Step
                 {
                     Left = from,
                     PerformanceEffect = PerformanceEffect.JumpOut,
+                    CodeLineKey = key,
                     Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
                 };
                 return step;
@@ -101,7 +109,7 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForSwapCopy( int[] snapshot, int left, int right )
+            public static Step CreateStepForSwapCopy( int[] snapshot, int left, int right, string key = "Swap" )
             {
                 var step = new Step
                 {
@@ -109,6 +117,7 @@ namespace Performance
                     Right = right,
                     Snapshot = snapshot,
                     PerformanceEffect = PerformanceEffect.SwapCopy,
+                    CodeLineKey = key,
                     Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeInMoving" ) )
                 };
                 return step;

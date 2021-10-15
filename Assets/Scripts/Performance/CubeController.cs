@@ -95,13 +95,18 @@ namespace Performance
                         _progress.value++;
                         _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
                         break;
+                    case PerformanceQueue.PerformanceEffect.CodeLine:
+                        CodeDictionary.AddMarkLine( step.CodeLineKey );
+                        yield return new WaitForSeconds( DefaultDelay / _speed.value );
+                        CodeDictionary.RemoveMarkLine( step.CodeLineKey );
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
             // _progress.interactable = true;
-
+            CodeDictionary.isPlaying = false;
             GameManager.EnableButtons( true );
         }
 

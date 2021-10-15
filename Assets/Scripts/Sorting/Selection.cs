@@ -11,11 +11,13 @@ namespace Sorting
             // one by one move boundary of unsorted subarray
             for ( var i = 0; i < n - 1; i++ )
             {
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
                 // find the minimum element in unsorted array
                 var min = i;
                 PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForMin( i ) );
                 for ( var j = i + 1; j < n; j++ )
                 {
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
                     PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelection( j, min ) );
                     if ( arr[j] < arr[min] )
                     {

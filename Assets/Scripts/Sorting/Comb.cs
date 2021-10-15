@@ -26,6 +26,7 @@ namespace Sorting
 
             while ( gap != 1 || swapped )
             {
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
                 gap = GetNextGap( gap );
 
                 // Set swapped as false.  Will go to true when two values are swapped.
@@ -34,6 +35,7 @@ namespace Sorting
                 // Compare all elements with current gap 
                 for ( var i = 0; i < length - gap; i++ )
                 {
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
                     PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + gap ) );
                     if ( arr[i] > arr[i + gap] )
                     {

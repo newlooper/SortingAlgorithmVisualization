@@ -9,8 +9,10 @@ namespace Sorting
             var n = arr.Length;
             for ( var i = 0; i < n - 1; i++ )
             {
+                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
                 for ( var j = 0; j < n - i - 1; j++ )
                 {
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
                     PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( j, j + 1 ) );
 
                     if ( arr[j] > arr[j + 1] )

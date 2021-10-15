@@ -15,13 +15,14 @@ namespace Performance
             {
             }
 
-            public static Step CreateStepForSelectTwo( int left, int right )
+            public static Step CreateStepForSelectTwo( int left, int right, string key = "Selected" )
             {
                 var step = new Step
                 {
                     Left = left,
                     Right = right,
                     PerformanceEffect = PerformanceEffect.SelectTwo,
+                    CodeLineKey = key,
                     Pace = new Pace(
                         Resources.Load<Material>( "Materials/CubeSelected" ),
                         null )
@@ -29,7 +30,7 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForSwap( int[] snapshot, int left, int right )
+            public static Step CreateStepForSwap( int[] snapshot, int left, int right, string key = "Swap" )
             {
                 var step = new Step
                 {
@@ -37,6 +38,7 @@ namespace Performance
                     Right = right,
                     Snapshot = snapshot,
                     PerformanceEffect = PerformanceEffect.Swap,
+                    CodeLineKey = key,
                     Pace = new Pace(
                         Resources.Load<Material>( "Materials/CubeSelected" ),
                         Resources.Load<Material>( "Materials/CubeInMoving" ) )
@@ -44,7 +46,7 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForSwapHeap( int[] snapshot, int left, int right )
+            public static Step CreateStepForSwapHeap( int[] snapshot, int left, int right, string key = "Swap" )
             {
                 var step = new Step
                 {
@@ -52,6 +54,7 @@ namespace Performance
                     Right = right,
                     Snapshot = snapshot,
                     PerformanceEffect = PerformanceEffect.SwapHeap,
+                    CodeLineKey = key,
                     Pace = new Pace(
                         Resources.Load<Material>( "Materials/CubeSelected" ),
                         Resources.Load<Material>( "Materials/CubeInMoving" ) )
@@ -68,6 +71,8 @@ namespace Performance
             public PerformanceEffect PerformanceEffect { get; set; }
 
             public Pace Pace { get; set; }
+
+            public string CodeLineKey { get; private set; }
         }
 
         public enum PerformanceEffect
@@ -85,6 +90,7 @@ namespace Performance
             AuxiliaryBack,
             MergeHistory,
             SwapHeap,
+            CodeLine,
         }
 
         public class Pace
@@ -110,9 +116,9 @@ namespace Performance
 
             public Vector3 Target { get; set; }
 
-            public Material MovingMaterial     { get; set; }
-            public Material SelectedMaterial   { get; set; }
-            public float    Speed              { get; set; }
+            public Material MovingMaterial   { get; set; }
+            public Material SelectedMaterial { get; set; }
+            public float    Speed            { get; set; }
         }
     }
 }

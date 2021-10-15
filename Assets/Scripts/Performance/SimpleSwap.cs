@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UI;
 using UnityEngine;
 using Pace = Performance.PerformanceQueue.Pace;
 
@@ -12,6 +13,7 @@ namespace Performance
             var cubes        = GameManager.Cubes;
             var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );
             var cubeSelected = step.Pace.SelectedMaterial;
+            CodeDictionary.AddMarkLine( step.CodeLineKey );
 
             SetPillarMaterial( cubes[left], cubeSelected );
             SetPillarMaterial( cubes[right], cubeSelected );
@@ -19,6 +21,7 @@ namespace Performance
 
             SetPillarMaterial( cubes[left], cubeDefault );
             SetPillarMaterial( cubes[right], cubeDefault );
+            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
         private static IEnumerator SwapHeapWithIndex( int left, int right, PerformanceQueue.Step step )
@@ -31,6 +34,7 @@ namespace Performance
             GameManager.Cubes.Swap( left, right );
             CompleteBinaryTree.List.Swap( left, right );
 
+            CodeDictionary.AddMarkLine( step.CodeLineKey );
             ////////////////////
             // 绑定移动前的固定位置
             var onePos = CompleteBinaryTree.List[left].transform.position;
@@ -63,6 +67,7 @@ namespace Performance
             SetPillarMaterial( cubes[right], cubeDefault );
             SetPillarMaterial( CompleteBinaryTree.List[left], cubeDefault );
             SetPillarMaterial( CompleteBinaryTree.List[right], cubeDefault );
+            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
         private static IEnumerator SwapWithIndex( int left, int right, PerformanceQueue.Step step )
@@ -73,7 +78,7 @@ namespace Performance
             ////////////////////////////////
             /// 交换 List 中的元素位置
             GameManager.Cubes.Swap( left, right );
-
+            CodeDictionary.AddMarkLine( step.CodeLineKey );
             ////////////////////
             /// 展示移动效果
             yield return SwapTwoObjectPosition( cubes[left], cubes[right], step.Pace );
@@ -82,6 +87,7 @@ namespace Performance
             /// 移动效果完成，撤销移动样式
             SetPillarMaterial( cubes[left], cubeDefault );
             SetPillarMaterial( cubes[right], cubeDefault );
+            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
         private static IEnumerator SwapTwoObjectPosition( GameObject one, GameObject two, Pace pace )
