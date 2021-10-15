@@ -25,10 +25,10 @@ namespace Sorting
                 }
                 else
                 {
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index, index - 1 ) );
+                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index ) );
                     // if the pots are in the wrong order, he switches them.
                     ( arr[index], arr[index - 1] ) = ( arr[index - 1], arr[index] );
-                    PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index, index - 1 ) );
+                    PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index ) );
                     index--;
                 }
             }

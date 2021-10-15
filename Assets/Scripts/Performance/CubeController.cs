@@ -102,9 +102,7 @@ namespace Performance
 
             // _progress.interactable = true;
 
-            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = true;
-            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = true;
-            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = true;
+            GameManager.EnableButtons( true );
         }
 
         public static IEnumerator Rewind()
@@ -139,9 +137,7 @@ namespace Performance
                 }
             }
 
-            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = true;
-            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = true;
-            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = true;
+            GameManager.EnableButtons( true );
         }
 
 

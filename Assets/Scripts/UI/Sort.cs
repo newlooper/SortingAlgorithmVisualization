@@ -6,7 +6,6 @@ using System.Threading;
 using Performance;
 using UnityEngine;
 using UnityEngine.UI;
-using Button = UnityEngine.UI.Button;
 
 namespace UI
 {
@@ -15,9 +14,8 @@ namespace UI
         public void DoSort()
         {
             if ( GameManager.Numbers.Length < 2 ) return;
-            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = false;
-            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = false;
-            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = false;
+
+            GameManager.EnableButtons( false );
 
             PrintArray( GameManager.Numbers, " <- Original" ); // log original array
 
@@ -40,9 +38,7 @@ namespace UI
 
         public void Rewind()
         {
-            GameObject.Find( "Gen" ).GetComponent<Button>().enabled = false;
-            GameObject.Find( "Sort" ).GetComponent<Button>().enabled = false;
-            GameObject.Find( "Rewind" ).GetComponent<Button>().enabled = false;
+            GameManager.EnableButtons( false );
             StartCoroutine( CubeController.Rewind() );
         }
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Performance;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Slider = UnityEngine.UI.Slider;
 
@@ -61,6 +62,13 @@ public class GameManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public static void EnableButtons( bool enable )
+    {
+        GameObject.Find( "Gen" ).GetComponent<Button>().interactable = enable;
+        GameObject.Find( "Sort" ).GetComponent<Button>().interactable = enable;
+        GameObject.Find( "Rewind" ).GetComponent<Button>().interactable = enable;
     }
 
     public class MyList<T>
