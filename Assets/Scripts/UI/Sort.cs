@@ -32,6 +32,7 @@ namespace UI
             } );
             sortOnly.Start(); // sort only for testing real performance of current algorithm
 
+            CompleteBinaryTree.ClearTree();
             PerformanceQueue.Rewind.Clear();
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
             PrintArray( GameManager.Numbers, " <- After visual sorting" );

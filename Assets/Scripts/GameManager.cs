@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Performance;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -22,6 +23,24 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GenObjects();
+        _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
+        _menu = GameObject.Find( "SliderMenu" );
+    }
+
+    private GameObject _codeLinePanel;
+    private GameObject _menu;
+
+    private void Update()
+    {
+        if ( Input.GetKeyUp( KeyCode.C ) )
+        {
+            _codeLinePanel.SetActive( !_codeLinePanel.activeSelf );
+        }
+
+        if ( Input.GetKeyUp( KeyCode.M ) )
+        {
+            _menu.GetComponent<SliderMenu>().ShowHideMenu();
+        }
     }
 
     public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();

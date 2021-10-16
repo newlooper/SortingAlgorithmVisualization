@@ -10,7 +10,7 @@ namespace Performance
 
         public static void BuildTree()
         {
-            Destroy( _treeContainer );
+            ClearTree();
             _treeContainer = Instantiate( Resources.Load<GameObject>( "Prefabs/TreeContainer" ) );
 
             const int storeyHeight = 3;
@@ -62,6 +62,11 @@ namespace Performance
                 lr.SetPosition( 0, Vector3.zero );
                 lr.SetPosition( 1, parent.transform.position - lineBox.transform.position );
             }
+        }
+
+        public static void ClearTree()
+        {
+            Destroy( _treeContainer );
         }
     }
 }

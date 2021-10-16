@@ -587,8 +587,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 130, y: -60}
-  m_SizeDelta: {x: 200, y: 80}
+  m_AnchoredPosition: {x: 130, y: -110}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &247537216
 MonoBehaviour:
@@ -612,10 +612,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 13
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -623,12 +623,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '<b><size="20">Camera Control</size></b>
-
-    [W,A,S,D,E,Q] Move
-
-    [Mouse
-    Right Button] Rotation'
+  m_Text: "<b><size=\"20\">Camera Control</size></b>\nMove\t\t\t[W,A,S,D,E,Q]\nRotation\t\t[Mouse
+    Right Button]\n\n<b><size=\"20\">UI Control</size></b>\nToggle Menu\t\t\t\t[M]\nToggle
+    Code View\t\t[C]"
 --- !u!222 &247537217
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1448,7 +1445,7 @@ GameObject:
   - component: {fileID: 598744006}
   m_Layer: 5
   m_Name: Panel
-  m_TagString: Untagged
+  m_TagString: CodeLinePanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
