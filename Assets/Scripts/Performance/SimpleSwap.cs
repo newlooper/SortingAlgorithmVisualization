@@ -31,22 +31,22 @@ namespace Performance
             ////////////////////////////////
             /// 交换 List 中的元素位置
             GameManager.Cubes.Swap( left, right );
-            CompleteBinaryTree.List.Swap( left, right );
+            CompleteBinaryTree.treeNodes.Swap( left, right );
 
             CodeDictionary.AddMarkLine( step.CodeLineKey );
             ////////////////////
             // 绑定移动前的固定位置
-            var onePos = CompleteBinaryTree.List[left].transform.position;
-            var twoPos = CompleteBinaryTree.List[right].transform.position;
+            var onePos = CompleteBinaryTree.treeNodes[left].transform.position;
+            var twoPos = CompleteBinaryTree.treeNodes[right].transform.position;
 
             var distancePillar = Math.Abs( right - left ) * Gap;
             var nodeSpeed      = Vector3.Distance( onePos, twoPos ) / ( distancePillar / _speed.value );
 
             ////////////////////
             /// 堆节点同时移动
-            var nodeA = Move( CompleteBinaryTree.List[left],
+            var nodeA = Move( CompleteBinaryTree.treeNodes[left],
                 new[] {new Pace( twoPos, step.Pace.MovingMaterial, nodeSpeed )} );
-            var nodeB = Move( CompleteBinaryTree.List[right],
+            var nodeB = Move( CompleteBinaryTree.treeNodes[right],
                 new[] {new Pace( onePos, step.Pace.MovingMaterial, nodeSpeed )} );
 
             _instance.StartCoroutine( nodeA );
@@ -64,8 +64,8 @@ namespace Performance
             /// 移动效果完成，撤销移动样式
             SetPillarMaterial( cubes[left], cubeDefault );
             SetPillarMaterial( cubes[right], cubeDefault );
-            SetPillarMaterial( CompleteBinaryTree.List[left], cubeDefault );
-            SetPillarMaterial( CompleteBinaryTree.List[right], cubeDefault );
+            SetPillarMaterial( CompleteBinaryTree.treeNodes[left], cubeDefault );
+            SetPillarMaterial( CompleteBinaryTree.treeNodes[right], cubeDefault );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 

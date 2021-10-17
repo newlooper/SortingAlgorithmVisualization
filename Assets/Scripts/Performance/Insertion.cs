@@ -6,14 +6,13 @@ namespace Performance
 {
     public partial class CubeController
     {
-        private static readonly ConcurrentQueue<GameObject> Image = new ConcurrentQueue<GameObject>();
+        private static readonly ConcurrentQueue<int> Image = new ConcurrentQueue<int>();
 
         private static IEnumerator JumpOut( int from, PerformanceQueue.Step step )
         {
             var cube   = GameManager.Cubes[from];
             var target = cube.transform.position + new Vector3( 0, 0, -1f );
             CodeDictionary.AddMarkLine( step.CodeLineKey );
-            Image.Enqueue( cube );
             yield return Move( cube, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
@@ -21,13 +20,13 @@ namespace Performance
 
         private static IEnumerator JumpIn( PerformanceQueue.Step step )
         {
-            if ( Image.TryDequeue( out var cube ) )
-            {
-                var target = cube.transform.position + new Vector3( 0, 0, 1f );
+            
+                var cube   = GameManager.Cubes[step.Left];
+                var target = new Vector3( step.Left * Gap, 0, 0f );
                 yield return Move( cube, new[] {new PerformanceQueue.Pace( target, step.Pace.MovingMaterial )} );
                 SetPillarMaterial( cube, Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
                 // yield return new WaitForSeconds( DefaultDelay / _speed.value );
-            }
+            
         }
 
         private static IEnumerator SwapCopy( int left, int right, PerformanceQueue.Step step )
@@ -99,10 +98,11 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForJumpIn()
+            public static Step CreateStepForJumpIn( int insert )
             {
                 var step = new Step
                 {
+                    Left = insert,
                     PerformanceEffect = PerformanceEffect.JumpIn,
                     Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
                 };

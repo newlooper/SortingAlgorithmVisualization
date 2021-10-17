@@ -11,13 +11,13 @@ namespace UI
 {
     public class Sort : MonoBehaviour
     {
-        public static string className;
+        public static string     className;
+        public        GameObject progress;
+        public        GameObject playBar;
 
         public void DoSort()
         {
             if ( GameManager.Numbers.Length < 2 ) return;
-
-            GameManager.EnableButtons( false );
 
             PrintArray( GameManager.Numbers, " <- Original" ); // log original array
 
@@ -33,17 +33,16 @@ namespace UI
             sortOnly.Start(); // sort only for testing real performance of current algorithm
 
             CompleteBinaryTree.ClearTree();
+            PerformanceQueue.Course.Clear();
             PerformanceQueue.Rewind.Clear();
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
-            PrintArray( GameManager.Numbers, " <- After visual sorting" );
-            StartCoroutine( CubeController.Play() );
-            CodeDictionary.isPlaying = true;
-        }
 
-        public void Rewind()
-        {
-            GameManager.EnableButtons( false );
-            StartCoroutine( CubeController.Rewind() );
+            PrintArray( GameManager.Numbers, " <- After visual sorting" );
+
+            CubeController.index = 0;
+            CubeController.inPlay = false;
+            progress.GetComponent<Slider>().value = 0;
+            playBar.GetComponent<PlayBar>().Play();
         }
 
         public static void PrintArray( IEnumerable<int> arr, string postfix = "", string prefix = "" )

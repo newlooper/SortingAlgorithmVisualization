@@ -17,12 +17,12 @@ namespace UI
                     if ( anim.GetBool( "Show" ) )
                     {
                         anim.SetBool( "Show", false );
-                        GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = "<<";
+                        // GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = "<<";
                     }
                     else
                     {
                         anim.SetBool( "Show", true );
-                        GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = ">>";
+                        // GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = ">>";
                     }
                 }
             }

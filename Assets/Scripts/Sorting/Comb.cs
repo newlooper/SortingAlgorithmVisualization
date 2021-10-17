@@ -26,7 +26,7 @@ namespace Sorting
 
             while ( gap != 1 || swapped )
             {
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
                 gap = GetNextGap( gap );
 
                 // Set swapped as false.  Will go to true when two values are swapped.
@@ -35,14 +35,15 @@ namespace Sorting
                 // Compare all elements with current gap 
                 for ( var i = 0; i < length - gap; i++ )
                 {
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
-                    PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + gap ) );
+                    PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
+                    PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSelectTwo( i, i + gap ) );
                     if ( arr[i] > arr[i + gap] )
                     {
-                        PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
+                        PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
                         // Swap
                         ( arr[i], arr[i + gap] ) = ( arr[i + gap], arr[i] );
-                        PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
+                        PerformanceQueue.Rewind.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap, "Swap",
+                            PerformanceQueue.Course.Count - 1 ) );
                         swapped = true;
                     }
                 }

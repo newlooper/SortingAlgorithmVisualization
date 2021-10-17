@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using Performance.ProducerConsumer;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,12 +9,16 @@ namespace Performance
 {
     public partial class CubeController : MonoBehaviour
     {
-        private static CubeController _instance;
-        private static Slider         _speed;
-        private static Slider         _progress;
-
-        public static  float Gap          { get; set; }
-        private static float DefaultDelay { get; set; }
+        private static          CubeController                        _instance;
+        private static          Slider                                _speed;
+        private static          Slider                                _progress;
+        public static           bool                                  inPlay;
+        public static           bool                                  canPlay = true;
+        public static           bool                                  oneStep;
+        public static           int                                   index;
+        public static           float                                 Gap          { get; private set; }
+        private static          float                                 DefaultDelay { get; set; }
+        private static readonly FixedSizeQueue<PerformanceQueue.Step> FixedBox = new FixedSizeQueue<PerformanceQueue.Step>( 1 );
 
         private void Awake()
         {
@@ -23,7 +29,7 @@ namespace Performance
             DefaultDelay = 1f;
         }
 
-        public void SetButtonText( string str )
+        private void SetButtonText( string str )
         {
             var buttons = GetComponentsInChildren<Button>();
             foreach ( var btn in buttons )
@@ -40,111 +46,105 @@ namespace Performance
 
         public static IEnumerator Play()
         {
-            _progress.minValue = 0;
+            if ( inPlay )
+            {
+                yield break;
+            }
+
+            inPlay = true;
+
+            CodeDictionary.inPlay = true;
+            GameManager.EnableButtons( false );
             _progress.maxValue = PerformanceQueue.Rewind.Count;
-            _progress.value = 0;
-            _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
+            var totalSteps = PerformanceQueue.Course.Count;
 
-            while ( PerformanceQueue.Course.TryDequeue( out var step ) )
+            while ( canPlay && index < totalSteps )
             {
-                switch ( step.PerformanceEffect )
+                var step = PerformanceQueue.Course[index];
+                if ( FixedBox.Enqueue( step ) )
                 {
-                    case PerformanceQueue.PerformanceEffect.SelectTwo:
-                        yield return HighlightTwoWithIndex( step.Left, step.Right, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.Swap:
-                        yield return SwapWithIndex( step.Left, step.Right, step );
-                        _progress.value++;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.SelectOne:
-                        yield return HighlightOneWithIndex( step.Left, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.UnSelectOne:
-                        yield return HighlightOneWithIndex( step.Left, step, 0 );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.ChangeSelection:
-                        yield return HighlightSelectionWithIndex( step.Left, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.NewMin:
-                        yield return HighlightChange( step.Left, step.Right, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.JumpOut:
-                        yield return JumpOut( step.Left, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.JumpIn:
-                        yield return JumpIn( step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.SwapCopy:
-                        yield return SwapCopy( step.Left, step.Right, step );
-                        _progress.value++;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.Auxiliary:
-                        yield return SimpleMove( step.Left, step.Right, step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.AuxiliaryBack:
-                        yield return AuxiliaryBack( step );
-                        break;
-                    case PerformanceQueue.PerformanceEffect.MergeHistory:
-                        _progress.value++;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.SwapHeap:
-                        yield return SwapHeapWithIndex( step.Left, step.Right, step );
-                        _progress.value++;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.CodeLine:
-                        CodeDictionary.AddMarkLine( step.CodeLineKey );
-                        yield return new WaitForSeconds( DefaultDelay / _speed.value );
-                        CodeDictionary.RemoveMarkLine( step.CodeLineKey );
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    yield return Show( step );
+                    index++;
+                    if ( oneStep )
+                    {
+                        Time.timeScale = 0;
+                        yield return null;
+                    }
+
+                    DropStep();
+                }
+                else
+                {
+                    yield return null;
                 }
             }
 
-            // _progress.interactable = true;
-            CodeDictionary.isPlaying = false;
+            inPlay = false;
+            ProgressBar.SwitchPlayPause();
+            CodeDictionary.inPlay = false;
             GameManager.EnableButtons( true );
         }
 
-        public static IEnumerator Rewind()
+        public static void DropStep()
         {
-            while ( PerformanceQueue.Rewind.Count > 0 )
-            {
-                var step = PerformanceQueue.Rewind.Pop();
-
-                switch ( step.PerformanceEffect )
-                {
-                    case PerformanceQueue.PerformanceEffect.Swap:
-                        yield return SwapWithIndex( step.Right, step.Left, step );
-                        ( GameManager.Numbers[step.Left], GameManager.Numbers[step.Right] ) =
-                            ( GameManager.Numbers[step.Right], GameManager.Numbers[step.Left] );
-                        _progress.value--;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.MergeHistory:
-                        yield return MergeRewind( step );
-                        _progress.value--;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    case PerformanceQueue.PerformanceEffect.SwapHeap:
-                        yield return SwapHeapWithIndex( step.Right, step.Left, step );
-                        ( GameManager.Numbers[step.Left], GameManager.Numbers[step.Right] ) =
-                            ( GameManager.Numbers[step.Right], GameManager.Numbers[step.Left] );
-                        _progress.value--;
-                        _progress.GetComponentInChildren<Text>().text = _progress.value.ToString();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            GameManager.EnableButtons( true );
+            FixedBox.Dequeue( out var dropStep );
         }
 
+        private static IEnumerator Show( PerformanceQueue.Step step )
+        {
+            switch ( step.PerformanceEffect )
+            {
+                case PerformanceQueue.PerformanceEffect.SelectTwo:
+                    yield return HighlightTwoWithIndex( step.Left, step.Right, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.Swap:
+                    yield return SwapWithIndex( step.Left, step.Right, step );
+                    _progress.value++;
+                    break;
+                case PerformanceQueue.PerformanceEffect.SelectOne:
+                    yield return HighlightOneWithIndex( step.Left, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.UnSelectOne:
+                    yield return HighlightOneWithIndex( step.Left, step, 0 );
+                    break;
+                case PerformanceQueue.PerformanceEffect.ChangeSelection:
+                    yield return HighlightSelectionWithIndex( step.Left, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.NewMin:
+                    yield return HighlightChange( step.Left, step.Right, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.JumpOut:
+                    yield return JumpOut( step.Left, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.JumpIn:
+                    yield return JumpIn( step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.SwapCopy:
+                    yield return SwapCopy( step.Left, step.Right, step );
+                    _progress.value++;
+                    break;
+                case PerformanceQueue.PerformanceEffect.Auxiliary:
+                    yield return SimpleMove( step.Left, step.Right, step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.AuxiliaryBack:
+                    yield return AuxiliaryBack( step );
+                    break;
+                case PerformanceQueue.PerformanceEffect.MergeHistory:
+                    _progress.value++;
+                    break;
+                case PerformanceQueue.PerformanceEffect.SwapHeap:
+                    yield return SwapHeapWithIndex( step.Left, step.Right, step );
+                    _progress.value++;
+                    break;
+                case PerformanceQueue.PerformanceEffect.CodeLine:
+                    CodeDictionary.AddMarkLine( step.CodeLineKey );
+                    yield return new WaitForSeconds( DefaultDelay / _speed.value );
+                    CodeDictionary.RemoveMarkLine( step.CodeLineKey );
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
 
         private static void SetPillarMaterial( GameObject go, Material mat )
         {
@@ -165,7 +165,10 @@ namespace Performance
 
                 while ( from.transform.position != pace.Target )
                 {
-                    from.transform.position = Vector3.MoveTowards( from.transform.position, pace.Target, speed * Time.deltaTime );
+                    from.transform.position = Vector3.MoveTowards(
+                        from.transform.position,
+                        pace.Target,
+                        speed * Time.deltaTime );
                     yield return null;
                 }
             }

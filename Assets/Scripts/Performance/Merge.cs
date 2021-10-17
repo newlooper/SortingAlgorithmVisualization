@@ -8,7 +8,7 @@ namespace Performance
         private static IEnumerator SimpleMove( int from, int to, PerformanceQueue.Step step )
         {
             CodeDictionary.AddMarkLine( step.CodeLineKey );
-            Image.Enqueue( GameManager.Cubes[from] );
+            Image.Enqueue( from );
             yield return Move( GameManager.Cubes[from], new[]
             {
                 new PerformanceQueue.Pace( new Vector3( to * Gap, 0, -2f ), step.Pace.MovingMaterial )
@@ -19,22 +19,20 @@ namespace Performance
         private static IEnumerator AuxiliaryBack( PerformanceQueue.Step step )
         {
             CodeDictionary.AddMarkLine( step.CodeLineKey );
-            while ( Image.TryDequeue( out var go ) )
+            while ( Image.TryDequeue( out var idx ) )
             {
-                yield return Move( go, new[]
+                var cube = GameManager.Cubes[idx];
+                if ( cube.transform.position.z != 0 )
                 {
-                    new PerformanceQueue.Pace( go.transform.position + new Vector3( 0, 0, 2f ), step.Pace.MovingMaterial )
-                } );
+                    yield return Move( cube, new[]
+                    {
+                        new PerformanceQueue.Pace( cube.transform.position + new Vector3( 0, 0, 2f ), step.Pace.MovingMaterial )
+                    } );
+                }
             }
 
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
             GameManager.GenObjectsFromArray( step.Snapshot );
-        }
-
-        private static IEnumerator MergeRewind( PerformanceQueue.Step step )
-        {
-            GameManager.GenObjectsFromArray( step.Snapshot );
-            yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
     }
 
@@ -67,11 +65,12 @@ namespace Performance
                 return step;
             }
 
-            public static Step CreateStepForMerge( int[] snapshot )
+            public static Step CreateStepForMerge( int[] snapshot, int cursor = -1 )
             {
                 var step = new Step
                 {
                     Snapshot = snapshot,
+                    Cursor = cursor,
                     PerformanceEffect = PerformanceEffect.MergeHistory
                 };
                 return step;

@@ -11,24 +11,25 @@ public class GameManager : MonoBehaviour
     public         Slider     min;
     public         Slider     max;
     public         Slider     count;
+    private static GameObject _progress;
     private static GameObject _space;
     private static GameObject _cubeContainer;
+    private static GameObject _codeLinePanel;
+    private static GameObject _menu;
 
     private void Awake()
     {
         _space = Resources.Load<GameObject>( "Prefabs/Space" );
         _cubeContainer = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
+        _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
+        _menu = GameObject.Find( "SliderMenu" );
+        _progress = GameObject.Find( "Progress" );
     }
 
     private void Start()
     {
         GenObjects();
-        _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
-        _menu = GameObject.Find( "SliderMenu" );
     }
-
-    private GameObject _codeLinePanel;
-    private GameObject _menu;
 
     private void Update()
     {
@@ -50,9 +51,9 @@ public class GameManager : MonoBehaviour
     public void GenObjects()
     {
         Destroy( GameObject.Find( "TreeContainer(Clone)" ) );
-        CompleteBinaryTree.List.Clear();
+        CompleteBinaryTree.treeNodes.Clear();
         GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
-        // GameObject.Find( "Main Camera" ).transform.LookAt( Cubes[Cubes.Count / 2].transform );
+        Rest();
     }
 
     public static void GenObjectsFromArray( int[] arr )
@@ -64,7 +65,9 @@ public class GameManager : MonoBehaviour
         Cubes = new MyList<GameObject>( arr.Length );
         for ( var i = 0; i < arr.Length; i++ )
         {
-            var cube = Instantiate( _cubeContainer, new Vector3( i * CubeController.Gap, 0f, 0f ), Quaternion.identity, parent.transform );
+            var cube = Instantiate( _cubeContainer,
+                new Vector3( i * CubeController.Gap, 0f, 0f ),
+                Quaternion.identity, parent.transform );
             cube.GetComponent<CubeController>().SetValue( arr[i] );
             Cubes.Add( cube );
         }
@@ -93,8 +96,18 @@ public class GameManager : MonoBehaviour
     {
         GameObject.Find( "Gen" ).GetComponent<Button>().interactable = enable;
         GameObject.Find( "Sort" ).GetComponent<Button>().interactable = enable;
-        GameObject.Find( "Rewind" ).GetComponent<Button>().interactable = enable;
         GameObject.Find( "Algorithm" ).GetComponent<Dropdown>().interactable = enable;
+    }
+
+    public static void Rest()
+    {
+        CompleteBinaryTree.ClearTree();
+        PerformanceQueue.Course.Clear();
+        PerformanceQueue.Rewind.Clear();
+        CubeController.index = 0;
+        CubeController.inPlay = false;
+        _progress.GetComponent<Slider>().value = 0;
+        _progress.GetComponent<Slider>().maxValue = 0;
     }
 
     public class MyList<T>

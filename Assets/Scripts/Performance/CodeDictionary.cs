@@ -9,10 +9,10 @@ namespace Performance
 {
     public class CodeDictionary : MonoBehaviour
     {
-        public static           bool                                           isPlaying = false;
-        private static          Dropdown                                       _algDropdown;
+        public static           bool                                           inPlay  = false;
         private static readonly List<string>                                   MarkLines  = new List<string>();
         private static readonly Regex                                          MarksRegex = new Regex( @"</?mark[^>]*>" );
+        private static          Dropdown                                       _algDropdown;
         private static          List<string>                                   _keys;
         private static          Dictionary<string, string>                     _codeLines;
         private static          Dictionary<string, Dictionary<string, string>> _codeDict;
@@ -28,7 +28,7 @@ namespace Performance
 
         private void Update()
         {
-            if ( isPlaying )
+            if ( inPlay )
             {
                 _codeLines = _codeDict[_algDropdown.options[_algDropdown.value].text];
                 _keys = new List<string>( _codeLines.Keys );

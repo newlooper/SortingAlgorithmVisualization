@@ -10,17 +10,19 @@ namespace Sorting
             var n = arr.Length;
             for ( var i = n / 2; i >= 0; i-- )
             {
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
                 Heapify( arr, n - 1, i );
             }
 
             for ( var i = n - 1; i > 0; i-- )
             {
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
                 // swap last element of the max-heap with the first element
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i ) );
                 ( arr[i], arr[0] ) = ( arr[0], arr[i] );
-                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i ) );
+                PerformanceQueue.Rewind.Add(
+                    PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i, "Swap",
+                        PerformanceQueue.Course.Count - 1 ) );
 
                 // exclude the last element from the heap and rebuild the heap 
                 Heapify( arr, i - 1, 0 );
@@ -39,7 +41,7 @@ namespace Sorting
             // if the left element is greater than root
             if ( left <= n && arr[left] > arr[max] )
             {
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "IF" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "IF" ) );
                 max = left;
             }
 
@@ -47,15 +49,17 @@ namespace Sorting
             if ( right <= n && arr[right] > arr[max] )
             {
                 max = right;
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForCodeLine( "IF2" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "IF2" ) );
             }
 
             // if the max is not i
             if ( max != i )
             {
-                PerformanceQueue.Course.Enqueue( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max, "Swap2" ) );
+                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max, "Swap2" ) );
                 ( arr[i], arr[max] ) = ( arr[max], arr[i] );
-                PerformanceQueue.Rewind.Push( PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max ) );
+                PerformanceQueue.Rewind.Add(
+                    PerformanceQueue.Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max, "Swap",
+                        PerformanceQueue.Course.Count - 1 ) );
                 // Recursively Heapify the affected sub-tree
                 Heapify( arr, n, max );
             }

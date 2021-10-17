@@ -6,7 +6,7 @@ namespace Performance
     public class CompleteBinaryTree : MonoBehaviour
     {
         private static GameObject                     _treeContainer;
-        public static  GameManager.MyList<GameObject> List = new GameManager.MyList<GameObject>();
+        public static  GameManager.MyList<GameObject> treeNodes = new GameManager.MyList<GameObject>();
 
         public static void BuildTree()
         {
@@ -16,7 +16,7 @@ namespace Performance
             const int storeyHeight = 3;
             var       heapSize     = GameManager.Cubes.Count;
             var       k            = (int)( Math.Floor( Math.Log( heapSize, 2 ) ) + 1 );
-            List = new GameManager.MyList<GameObject>( heapSize );
+            treeNodes = new GameManager.MyList<GameObject>( heapSize );
 
             for ( int nodeIndexInHeap = 0, layer = 1; layer <= k; layer++ )
             {
@@ -41,16 +41,16 @@ namespace Performance
                         Quaternion.identity );
                     node.transform.SetParent( _treeContainer.transform );
                     node.transform.Find( "Cube" ).transform.localScale = new Vector3( 1, 1, 1 );
-                    List.Add( node );
+                    treeNodes.Add( node );
                 }
             }
 
             var lineMaterial = new Material( Shader.Find( "Sprites/Default" ) );
 
-            for ( var i = 1; i < List.Count; i++ )
+            for ( var i = 1; i < treeNodes.Count; i++ )
             {
-                var node    = List[i];
-                var parent  = List[(int)( Math.Floor( i - 1f ) / 2 )];
+                var node    = treeNodes[i];
+                var parent  = treeNodes[(int)( Math.Floor( i - 1f ) / 2 )];
                 var lineBox = new GameObject();
                 lineBox.transform.SetParent( _treeContainer.transform );
                 lineBox.transform.position = node.transform.position;

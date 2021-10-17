@@ -6,9 +6,9 @@ public class CameraController : MonoBehaviour
 
     #region 相机移动参数
 
-    public float moveSpeed = 1.0f;
+    public float moveSpeed   = 1.0f;
     public float rotateSpeed = 90.0f;
-    public float shiftRate = 2.0f; // 按住Shift加速
+    public float shiftRate   = 2.0f; // 按住Shift加速
     public float minDistance = 0.5f; // 相机离不可穿过的表面的最小距离（小于等于0时可穿透任何表面）
 
     #endregion
@@ -42,12 +42,12 @@ public class CameraController : MonoBehaviour
         while ( Physics.Raycast( mainCamera.position, _direction, out var hit, minDistance ) )
         {
             // 消去垂直于不可穿透表面的运动速度分量
-            var angel = Vector3.Angle( _direction, hit.normal );
+            var angel     = Vector3.Angle( _direction, hit.normal );
             var magnitude = Vector3.Magnitude( _direction ) * Mathf.Cos( Mathf.Deg2Rad * ( 180 - angel ) );
             _direction += hit.normal * magnitude;
         }
 
-        mainCamera.Translate( _direction * moveSpeed * Time.deltaTime, Space.World );
+        mainCamera.Translate( _direction * moveSpeed * Time.unscaledDeltaTime, Space.World );
     }
 
     private void GetDirection()
@@ -84,11 +84,11 @@ public class CameraController : MonoBehaviour
         if ( Input.GetMouseButton( 1 ) )
         {
             // 转相机朝向
-            mainCamera.RotateAround( mainCamera.position, Vector3.up, Input.GetAxis( "Mouse X" ) * rotateSpeed * Time.deltaTime );
-            mainCamera.RotateAround( mainCamera.position, mainCamera.right, -Input.GetAxis( "Mouse Y" ) * rotateSpeed * Time.deltaTime );
+            mainCamera.RotateAround( mainCamera.position, Vector3.up, Input.GetAxis( "Mouse X" ) * rotateSpeed * Time.unscaledDeltaTime );
+            mainCamera.RotateAround( mainCamera.position, mainCamera.right, -Input.GetAxis( "Mouse Y" ) * rotateSpeed * Time.unscaledDeltaTime );
             // 转运动速度方向
-            _direction = V3RotateAround( _direction, Vector3.up, Input.GetAxis( "Mouse X" ) * rotateSpeed * Time.deltaTime );
-            _direction = V3RotateAround( _direction, mainCamera.right, -Input.GetAxis( "Mouse Y" ) * rotateSpeed * Time.deltaTime );
+            _direction = V3RotateAround( _direction, Vector3.up, Input.GetAxis( "Mouse X" ) * rotateSpeed * Time.unscaledDeltaTime );
+            _direction = V3RotateAround( _direction, mainCamera.right, -Input.GetAxis( "Mouse Y" ) * rotateSpeed * Time.unscaledDeltaTime );
         }
 
         #endregion
