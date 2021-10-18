@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using Pace = Performance.PerformanceQueue.Pace;
 
 namespace Performance
 {
     public partial class CubeController
     {
-        private static IEnumerator HighlightTwoWithIndex( int left, int right, PerformanceQueue.Step step )
+        private static IEnumerator HighlightTwoWithIndex( int left, int right, Step step )
         {
             var cubes        = GameManager.Cubes;
             var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );
@@ -23,7 +22,7 @@ namespace Performance
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
-        private static IEnumerator SwapHeapWithIndex( int left, int right, PerformanceQueue.Step step )
+        private static IEnumerator SwapHeapWithIndex( int left, int right, Step step )
         {
             var cubes       = GameManager.Cubes;
             var cubeDefault = Resources.Load<Material>( "Materials/Cube" );
@@ -69,7 +68,7 @@ namespace Performance
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
-        private static IEnumerator SwapWithIndex( int left, int right, PerformanceQueue.Step step )
+        private static IEnumerator SwapWithIndex( int left, int right, Step step )
         {
             var cubes       = GameManager.Cubes;
             var cubeDefault = Resources.Load<Material>( "Materials/Cube" );

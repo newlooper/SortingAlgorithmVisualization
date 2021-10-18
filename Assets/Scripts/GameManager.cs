@@ -13,14 +13,15 @@ public class GameManager : MonoBehaviour
     public         Slider     count;
     private static GameObject _progress;
     private static GameObject _space;
-    private static GameObject _cubeContainer;
+    private static GameObject _spacePrefab;
+    private static GameObject _cubePrefab;
     private static GameObject _codeLinePanel;
     private static GameObject _menu;
 
     private void Awake()
     {
-        _space = Resources.Load<GameObject>( "Prefabs/Space" );
-        _cubeContainer = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
+        _spacePrefab = Resources.Load<GameObject>( "Prefabs/Space" );
+        _cubePrefab = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
         _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
         _menu = GameObject.Find( "SliderMenu" );
         _progress = GameObject.Find( "Progress" );
@@ -50,25 +51,24 @@ public class GameManager : MonoBehaviour
 
     public void GenObjects()
     {
-        Destroy( GameObject.Find( "TreeContainer(Clone)" ) );
-        CompleteBinaryTree.treeNodes.Clear();
-        GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
         Rest();
+        GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
     }
 
     public static void GenObjectsFromArray( int[] arr )
     {
-        Numbers = arr;
-        Destroy( GameObject.Find( "Space(Clone)" ) );
+        Destroy( _space );
+        _space = Instantiate( _spacePrefab );
 
-        var parent = Instantiate( _space );
-        Cubes = new MyList<GameObject>( arr.Length );
-        for ( var i = 0; i < arr.Length; i++ )
+        Numbers = arr;
+        Cubes = new MyList<GameObject>( Numbers.Length );
+
+        for ( var i = 0; i < Numbers.Length; i++ )
         {
-            var cube = Instantiate( _cubeContainer,
+            var cube = Instantiate( _cubePrefab,
                 new Vector3( i * CubeController.Gap, 0f, 0f ),
-                Quaternion.identity, parent.transform );
-            cube.GetComponent<CubeController>().SetValue( arr[i] );
+                Quaternion.identity, _space.transform );
+            cube.GetComponent<CubeController>().SetValue( Numbers[i] );
             Cubes.Add( cube );
         }
     }

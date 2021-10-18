@@ -14,6 +14,7 @@ namespace UI
         public static string     className;
         public        GameObject progress;
         public        GameObject playBar;
+        public        GameObject algorithm;
 
         public void DoSort()
         {
@@ -21,7 +22,7 @@ namespace UI
 
             PrintArray( GameManager.Numbers, " <- Original" ); // log original array
 
-            var algDropdown = GameObject.Find( "Algorithm" ).GetComponent<Dropdown>();
+            var algDropdown = algorithm.GetComponent<Dropdown>();
             className = algDropdown.options[algDropdown.value].text;
 
             var cloneForPureSort = GameManager.Numbers.Clone() as int[];

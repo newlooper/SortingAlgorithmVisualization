@@ -5,13 +5,14 @@ namespace Performance
 {
     public class CompleteBinaryTree : MonoBehaviour
     {
-        private static GameObject                     _treeContainer;
-        public static  GameManager.MyList<GameObject> treeNodes = new GameManager.MyList<GameObject>();
+        private static readonly GameObject                     TreeContainerPrefab = Resources.Load<GameObject>( "Prefabs/TreeContainer" );
+        private static          GameObject                     _treeContainer;
+        public static           GameManager.MyList<GameObject> treeNodes = new GameManager.MyList<GameObject>();
 
         public static void BuildTree()
         {
             ClearTree();
-            _treeContainer = Instantiate( Resources.Load<GameObject>( "Prefabs/TreeContainer" ) );
+            _treeContainer = Instantiate( TreeContainerPrefab );
 
             const int storeyHeight = 3;
             var       heapSize     = GameManager.Cubes.Count;

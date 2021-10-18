@@ -11,32 +11,32 @@ namespace Sorting
             // one by one move boundary of unsorted subarray
             for ( var i = 0; i < n - 1; i++ )
             {
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "For" ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "For" ) );
                 // find the minimum element in unsorted array
                 var min = i;
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForMin( i ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForMin( i ) );
                 for ( var j = i + 1; j < n; j++ )
                 {
-                    PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "For2" ) );
-                    PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSelection( j, min ) );
+                    PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "For2" ) );
+                    PerformanceQueue.Course.Add( Step.CreateStepForSelection( j, min ) );
                     if ( arr[j] < arr[min] )
                     {
-                        PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForChangeMin( min, j ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForChangeMin( min, j ) );
                         min = j;
                     }
                 }
 
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForUnSelection( i ) );
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForUnSelection( n - 1 ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForUnSelection( i ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForUnSelection( n - 1 ) );
                 if ( min == i )
                 {
                     continue;
                 }
 
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, min ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, min ) );
                 // swap the found minimum element with the first element
                 ( arr[min], arr[i] ) = ( arr[i], arr[min] );
-                PerformanceQueue.Rewind.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], i, min, "Swap",
+                PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, min, "Swap",
                     PerformanceQueue.Course.Count - 1 ) );
             }
         }

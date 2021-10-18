@@ -9,16 +9,16 @@ namespace Performance
 {
     public partial class CubeController : MonoBehaviour
     {
-        private static          CubeController                        _instance;
-        private static          Slider                                _speed;
-        private static          Slider                                _progress;
-        public static           bool                                  inPlay;
-        public static           bool                                  canPlay = true;
-        public static           bool                                  oneStep;
-        public static           int                                   index;
-        public static           float                                 Gap          { get; private set; }
-        private static          float                                 DefaultDelay { get; set; }
-        private static readonly FixedSizeQueue<PerformanceQueue.Step> FixedBox = new FixedSizeQueue<PerformanceQueue.Step>( 1 );
+        private static          CubeController       _instance;
+        private static          Slider               _speed;
+        private static          Slider               _progress;
+        public static           bool                 inPlay;
+        public static           bool                 canPlay = true;
+        public static           bool                 oneStep;
+        public static           int                  index;
+        public static           float                Gap          { get; private set; }
+        private static          float                DefaultDelay { get; set; }
+        private static readonly FixedSizeQueue<Step> FixedBox = new FixedSizeQueue<Step>( 1 );
 
         private void Awake()
         {
@@ -90,53 +90,54 @@ namespace Performance
             FixedBox.Dequeue( out var dropStep );
         }
 
-        private static IEnumerator Show( PerformanceQueue.Step step )
+        private static IEnumerator Show( Step step )
         {
             switch ( step.PerformanceEffect )
             {
-                case PerformanceQueue.PerformanceEffect.SelectTwo:
+                case PerformanceEffect.SelectTwo:
                     yield return HighlightTwoWithIndex( step.Left, step.Right, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.Swap:
+                case PerformanceEffect.Swap:
                     yield return SwapWithIndex( step.Left, step.Right, step );
                     _progress.value++;
                     break;
-                case PerformanceQueue.PerformanceEffect.SelectOne:
+                case PerformanceEffect.SelectOne:
                     yield return HighlightOneWithIndex( step.Left, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.UnSelectOne:
+                case PerformanceEffect.UnSelectOne:
                     yield return HighlightOneWithIndex( step.Left, step, 0 );
                     break;
-                case PerformanceQueue.PerformanceEffect.ChangeSelection:
+                case PerformanceEffect.ChangeSelection:
                     yield return HighlightSelectionWithIndex( step.Left, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.NewMin:
+                case PerformanceEffect.NewMin:
                     yield return HighlightChange( step.Left, step.Right, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.JumpOut:
+                case PerformanceEffect.JumpOut:
                     yield return JumpOut( step.Left, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.JumpIn:
+                case PerformanceEffect.JumpIn:
                     yield return JumpIn( step );
                     break;
-                case PerformanceQueue.PerformanceEffect.SwapCopy:
+                case PerformanceEffect.SwapCopy:
                     yield return SwapCopy( step.Left, step.Right, step );
                     _progress.value++;
                     break;
-                case PerformanceQueue.PerformanceEffect.Auxiliary:
+                case PerformanceEffect.Auxiliary:
                     yield return SimpleMove( step.Left, step.Right, step );
                     break;
-                case PerformanceQueue.PerformanceEffect.AuxiliaryBack:
+                case PerformanceEffect.AuxiliaryBack:
                     yield return AuxiliaryBack( step );
-                    break;
-                case PerformanceQueue.PerformanceEffect.MergeHistory:
                     _progress.value++;
                     break;
-                case PerformanceQueue.PerformanceEffect.SwapHeap:
+                case PerformanceEffect.MergeHistory:
+                    _progress.value++;
+                    break;
+                case PerformanceEffect.SwapHeap:
                     yield return SwapHeapWithIndex( step.Left, step.Right, step );
                     _progress.value++;
                     break;
-                case PerformanceQueue.PerformanceEffect.CodeLine:
+                case PerformanceEffect.CodeLine:
                     CodeDictionary.AddMarkLine( step.CodeLineKey );
                     yield return new WaitForSeconds( DefaultDelay / _speed.value );
                     CodeDictionary.RemoveMarkLine( step.CodeLineKey );
@@ -151,7 +152,7 @@ namespace Performance
             go.transform.Find( "Cube" ).transform.Find( "Pillar" ).GetComponent<MeshRenderer>().material = mat;
         }
 
-        private static IEnumerator Move( GameObject from, PerformanceQueue.Pace[] paces )
+        private static IEnumerator Move( GameObject from, Pace[] paces )
         {
             foreach ( var pace in paces )
             {

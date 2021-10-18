@@ -5,7 +5,7 @@ namespace Performance
 {
     public partial class CubeController
     {
-        private static IEnumerator HighlightOneWithIndex( int index, PerformanceQueue.Step step, float lifetime = 1f )
+        private static IEnumerator HighlightOneWithIndex( int index, Step step, float lifetime = 1f )
         {
             var cubes = GameManager.Cubes;
             CodeDictionary.AddMarkLine( step.CodeLineKey );
@@ -17,7 +17,7 @@ namespace Performance
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
-        private static IEnumerator HighlightSelectionWithIndex( int index, PerformanceQueue.Step step )
+        private static IEnumerator HighlightSelectionWithIndex( int index, Step step )
         {
             var cubes        = GameManager.Cubes;
             var cubeSelected = step.Pace.SelectedMaterial;
@@ -34,7 +34,7 @@ namespace Performance
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
-        private static IEnumerator HighlightChange( int oldMin, int newMin, PerformanceQueue.Step step )
+        private static IEnumerator HighlightChange( int oldMin, int newMin, Step step )
         {
             var cubes        = GameManager.Cubes;
             var cubeSelected = step.Pace.SelectedMaterial;
@@ -49,62 +49,59 @@ namespace Performance
         }
     }
 
-    public static partial class PerformanceQueue
+    public partial class Step
     {
-        public partial class Step
+        public static Step CreateStepForMin( int index, string key = "Selected" )
         {
-            public static Step CreateStepForMin( int index, string key = "Selected" )
+            var step = new Step
             {
-                var step = new Step
-                {
-                    Left = index,
-                    PerformanceEffect = PerformanceEffect.SelectOne,
-                    CodeLineKey = key,
-                    Pace = new Pace(
-                        Resources.Load<Material>( "Materials/CubeSelectedRed" ),
-                        Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
-                };
-                return step;
-            }
+                Left = index,
+                PerformanceEffect = PerformanceEffect.SelectOne,
+                CodeLineKey = key,
+                Pace = new Pace(
+                    Resources.Load<Material>( "Materials/CubeSelectedRed" ),
+                    Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+            };
+            return step;
+        }
 
-            public static Step CreateStepForChangeMin( int oldIndex, int newIndex, string key = "Selected3" )
+        public static Step CreateStepForChangeMin( int oldIndex, int newIndex, string key = "Selected3" )
+        {
+            var step = new Step
             {
-                var step = new Step
-                {
-                    Left = oldIndex,
-                    Right = newIndex,
-                    PerformanceEffect = PerformanceEffect.NewMin,
-                    CodeLineKey = key,
-                    Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelectedRed" ), null )
-                };
-                return step;
-            }
+                Left = oldIndex,
+                Right = newIndex,
+                PerformanceEffect = PerformanceEffect.NewMin,
+                CodeLineKey = key,
+                Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelectedRed" ), null )
+            };
+            return step;
+        }
 
-            public static Step CreateStepForSelection( int index, int currentMin, string key = "Selected2" )
+        public static Step CreateStepForSelection( int index, int currentMin, string key = "Selected2" )
+        {
+            var step = new Step
             {
-                var step = new Step
-                {
-                    Left = index,
-                    Right = currentMin,
-                    PerformanceEffect = PerformanceEffect.ChangeSelection,
-                    CodeLineKey = key,
-                    Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelected" ), null )
-                };
-                return step;
-            }
+                Left = index,
+                Right = currentMin,
+                PerformanceEffect = PerformanceEffect.ChangeSelection,
+                CodeLineKey = key,
+                Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelected" ), null )
+            };
+            return step;
+        }
 
-            public static Step CreateStepForUnSelection( int index )
+        public static Step CreateStepForUnSelection( int index )
+        {
+            var step = new Step
             {
-                var step = new Step
-                {
-                    Left = index,
-                    PerformanceEffect = PerformanceEffect.UnSelectOne,
-                    Pace = new Pace(
-                        Resources.Load<Material>( "Materials/Cube" ),
-                        Resources.Load<Material>( "Materials/Cube" ) )
-                };
-                return step;
-            }
+                Left = index,
+                PerformanceEffect = PerformanceEffect.UnSelectOne,
+                Pace = new Pace(
+                    Resources.Load<Material>( "Materials/Cube" ),
+                    Resources.Load<Material>( "Materials/Cube" ) )
+            };
+            return step;
         }
     }
 }

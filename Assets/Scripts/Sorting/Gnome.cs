@@ -10,14 +10,14 @@ namespace Sorting
 
             while ( index < length )
             {
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForCodeLine( "While" ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "While" ) );
                 // if there is no pot next to the gnome, he is done.
                 if ( index == 0 ) // if the gnome is at the start of the line...
                 {
                     index++; // he steps forward
                 }
 
-                PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSelectTwo( index, index - 1 ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( index, index - 1 ) );
 
                 // if the pots next to the gnome are in the correct order...
                 if ( arr[index] >= arr[index - 1] )
@@ -26,10 +26,10 @@ namespace Sorting
                 }
                 else
                 {
-                    PerformanceQueue.Course.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index ) );
+                    PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index ) );
                     // if the pots are in the wrong order, he switches them.
                     ( arr[index], arr[index - 1] ) = ( arr[index - 1], arr[index] );
-                    PerformanceQueue.Rewind.Add( PerformanceQueue.Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index, "Swap",
+                    PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], index - 1, index, "Swap",
                         PerformanceQueue.Course.Count - 1 ) );
                     index--;
                 }
