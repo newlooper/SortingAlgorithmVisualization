@@ -1,3 +1,7 @@
+// Copyright (c) 2021 Dylan Cheng (https://github.com/newlooper). All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 using System.Collections.Generic;
 using Performance;
 using UI;
@@ -46,6 +50,15 @@ public class GameManager : MonoBehaviour
             _menu.GetComponent<SliderMenu>().ShowHideMenu();
         }
     }
+
+    // private void OnGUI()
+    // {
+    //     if ( Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.SysReq )
+    //     {
+    //         ScreenCapture.CaptureScreenshot( @"X:\Temp.png" );
+    //         Debug.Log( Application.dataPath );
+    //     }
+    // }
 
     public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
 
