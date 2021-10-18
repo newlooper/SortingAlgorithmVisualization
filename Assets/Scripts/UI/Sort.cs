@@ -36,6 +36,7 @@ namespace UI
             CompleteBinaryTree.ClearTree();
             PerformanceQueue.Course.Clear();
             PerformanceQueue.Rewind.Clear();
+            GameManager.GenObjectsFromArray( GameManager.Numbers );
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
 
             PrintArray( GameManager.Numbers, " <- After visual sorting" );

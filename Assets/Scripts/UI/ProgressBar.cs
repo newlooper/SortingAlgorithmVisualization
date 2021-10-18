@@ -44,11 +44,6 @@ namespace UI
 
         public IEnumerator PauseAt( int rewindCursor )
         {
-            if ( PerformanceQueue.Rewind.Count == 0 )
-            {
-                yield break;
-            }
-
             btnPlay.SetActive( true );
             btnPause.SetActive( false );
 
@@ -56,6 +51,12 @@ namespace UI
             Time.timeScale = 10;
             yield return new WaitUntil( () => !CubeController.inPlay );
             Time.timeScale = 0;
+            CubeController.canPlay = true;
+
+            if ( PerformanceQueue.Rewind.Count == 0 )
+            {
+                yield break;
+            }
 
             if ( rewindCursor == PerformanceQueue.Rewind.Count )
             {
@@ -80,8 +81,6 @@ namespace UI
                         break;
                 }
             }
-
-            CubeController.canPlay = true;
         }
     }
 }

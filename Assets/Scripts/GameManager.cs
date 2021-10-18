@@ -8,15 +8,16 @@ using Slider = UnityEngine.UI.Slider;
 
 public class GameManager : MonoBehaviour
 {
-    public         Slider     min;
-    public         Slider     max;
-    public         Slider     count;
-    private static GameObject _progress;
-    private static GameObject _space;
-    private static GameObject _spacePrefab;
-    private static GameObject _cubePrefab;
-    private static GameObject _codeLinePanel;
-    private static GameObject _menu;
+    public         Slider      min;
+    public         Slider      max;
+    public         Slider      count;
+    private static GameObject  _progress;
+    private static GameObject  _space;
+    private static GameObject  _spacePrefab;
+    private static GameObject  _cubePrefab;
+    private static GameObject  _codeLinePanel;
+    private static GameObject  _menu;
+    private static GameManager _instance;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
         _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
         _menu = GameObject.Find( "SliderMenu" );
         _progress = GameObject.Find( "Progress" );
+        _instance = this;
     }
 
     private void Start()
@@ -73,11 +75,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private static int[] GetUniqueRandomArray( int min, int max, int count )
+    private static int[] GetUniqueRandomArray( int minNum, int maxNum, int count )
     {
+        if ( maxNum - minNum < count )
+        {
+            maxNum = count + minNum;
+            _instance.max.value = maxNum;
+        }
+
         var result         = new int[count];
         var numbersInOrder = new List<int>();
-        for ( var x = min; x < max; x++ )
+        for ( var x = minNum; x < maxNum; x++ )
         {
             numbersInOrder.Add( x );
         }
