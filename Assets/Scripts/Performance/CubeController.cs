@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 using Performance.ProducerConsumer;
 using UI;
 using UnityEngine;
@@ -13,85 +14,62 @@ namespace Performance
 {
     public partial class CubeController : MonoBehaviour
     {
-        private static          CubeController       _instance;
-        private static          Slider               _speed;
-        private static          Slider               _progress;
-        public static           bool                 inPlay;
-        public static           bool                 canPlay = true;
-        public static           bool                 oneStep;
-        public static           int                  index;
-        public static           float                Gap          { get; private set; }
-        private static          float                DefaultDelay { get; set; }
-        private static readonly FixedSizeQueue<Step> FixedBox = new FixedSizeQueue<Step>( 1 );
+        private static         CubeController       _instance;
+        private static         Slider               _speed;
+        public static          bool                 inPlay;
+        public static          bool                 canPlay = true;
+        public static          bool                 inAction;
+        public static          int                  courseIndex;
+        public static          int                  rewindIndex;
+        public static readonly FixedSizeQueue<Step> FixedBox = new FixedSizeQueue<Step>( 1 );
+        public                 Transform            scaler;
+        private                int                  _value;
 
         private void Awake()
         {
             _instance = this;
             _speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
-            _progress = GameObject.Find( "Progress" ).GetComponent<Slider>();
-            Gap = 1.5f;
-            DefaultDelay = 1f;
+            scaler = transform.Find( "Cube" );
         }
 
         private void SetButtonText( string str )
         {
             var buttons = GetComponentsInChildren<Button>();
-            foreach ( var btn in buttons )
-            {
-                btn.GetComponentInChildren<Text>().text = str;
-            }
+            foreach ( var btn in buttons ) btn.GetComponentInChildren<Text>().text = str;
         }
 
         public void SetValue( int value )
         {
-            transform.Find( "Cube" ).transform.localScale = new Vector3( 1, value / 2f, 1 );
+            scaler.localScale = new Vector3( 1, value * Config.CubeScale, 1 );
             SetButtonText( value.ToString() );
+            _value = value;
         }
 
         public static IEnumerator Play()
         {
-            if ( inPlay )
-            {
-                yield break;
-            }
-
             inPlay = true;
-
             CodeDictionary.inPlay = true;
             GameManager.EnableButtons( false );
-            _progress.maxValue = PerformanceQueue.Rewind.Count;
+
             var totalSteps = PerformanceQueue.Course.Count;
-
-            while ( canPlay && index < totalSteps )
-            {
-                var step = PerformanceQueue.Course[index];
-                if ( FixedBox.Enqueue( step ) )
+            while ( canPlay && courseIndex < totalSteps )
+                if ( FixedBox.Dequeue( out var step ) )
                 {
+                    inAction = true;
+                    Interlocked.Increment( ref courseIndex );
                     yield return Show( step );
-                    index++;
-                    if ( oneStep )
-                    {
-                        Time.timeScale = 0;
-                        yield return null;
-                    }
-
-                    DropStep();
+                    inAction = false;
                 }
                 else
                 {
                     yield return null;
                 }
-            }
 
+            FixedBox.Dequeue( out var none );
             inPlay = false;
-            ProgressBar.SwitchPlayPause();
             CodeDictionary.inPlay = false;
             GameManager.EnableButtons( true );
-        }
-
-        public static void DropStep()
-        {
-            FixedBox.Dequeue( out var dropStep );
+            ProgressBar.SetPlayerButtonStatus( 0 );
         }
 
         private static IEnumerator Show( Step step )
@@ -103,7 +81,7 @@ namespace Performance
                     break;
                 case PerformanceEffect.Swap:
                     yield return SwapWithIndex( step.Left, step.Right, step );
-                    _progress.value++;
+                    Interlocked.Increment( ref rewindIndex );
                     break;
                 case PerformanceEffect.SelectOne:
                     yield return HighlightOneWithIndex( step.Left, step );
@@ -125,26 +103,33 @@ namespace Performance
                     break;
                 case PerformanceEffect.SwapCopy:
                     yield return SwapCopy( step.Left, step.Right, step );
-                    _progress.value++;
+                    Interlocked.Increment( ref rewindIndex );
                     break;
-                case PerformanceEffect.Auxiliary:
+                case PerformanceEffect.MergePick:
                     yield return SimpleMove( step.Left, step.Right, step );
                     break;
-                case PerformanceEffect.AuxiliaryBack:
+                case PerformanceEffect.MergeBack:
                     yield return AuxiliaryBack( step );
-                    _progress.value++;
+                    Interlocked.Increment( ref rewindIndex );
                     break;
                 case PerformanceEffect.MergeHistory:
-                    _progress.value++;
+                    Interlocked.Increment( ref rewindIndex );
                     break;
                 case PerformanceEffect.SwapHeap:
                     yield return SwapHeapWithIndex( step.Left, step.Right, step );
-                    _progress.value++;
+                    Interlocked.Increment( ref rewindIndex );
                     break;
                 case PerformanceEffect.CodeLine:
                     CodeDictionary.AddMarkLine( step.CodeLineKey );
-                    yield return new WaitForSeconds( DefaultDelay / _speed.value );
+                    yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
                     CodeDictionary.RemoveMarkLine( step.CodeLineKey );
+                    break;
+                case PerformanceEffect.RadixPick:
+                    yield return MoveToBucket( step );
+                    break;
+                case PerformanceEffect.RadixBack:
+                    Interlocked.Increment( ref rewindIndex );
+                    yield return RadixBack( step );
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -161,10 +146,7 @@ namespace Performance
             foreach ( var pace in paces )
             {
                 var speed = _speed.value;
-                if ( pace.Speed != 0 )
-                {
-                    speed = pace.Speed;
-                }
+                if ( pace.Speed != 0 ) speed = pace.Speed;
 
                 SetPillarMaterial( from, pace.MovingMaterial );
 

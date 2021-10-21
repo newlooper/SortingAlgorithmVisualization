@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using Performance;
@@ -16,7 +17,6 @@ namespace UI
     public class Sort : MonoBehaviour
     {
         public static string     className;
-        public        GameObject progress;
         public        GameObject playBar;
         public        GameObject algorithm;
 
@@ -45,9 +45,9 @@ namespace UI
 
             PrintArray( GameManager.Numbers, " <- After visual sorting" );
 
-            CubeController.index = 0;
+            CubeController.courseIndex = 0;
             CubeController.inPlay = false;
-            progress.GetComponent<Slider>().value = 0;
+            CubeController.rewindIndex = 0;
             playBar.GetComponent<PlayBar>().Play();
         }
 
@@ -68,7 +68,7 @@ namespace UI
         {
             var type = Type.GetType( classname );
             var func = type.GetMethod( "Sort",
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static );
+                BindingFlags.Public | BindingFlags.Static );
             func.Invoke( null, new object[] {numbers} );
         }
     }

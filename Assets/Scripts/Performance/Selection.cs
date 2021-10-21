@@ -34,7 +34,7 @@ namespace Performance
                 SetPillarMaterial( cubes[index - 1], cubeDefault );
             }
 
-            yield return new WaitForSeconds( DefaultDelay / _speed.value );
+            yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
 
@@ -48,7 +48,7 @@ namespace Performance
             SetPillarMaterial( cubes[oldMin], cubeDefault );
             SetPillarMaterial( cubes[newMin], cubeSelected );
 
-            yield return new WaitForSeconds( DefaultDelay / _speed.value );
+            yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
     }

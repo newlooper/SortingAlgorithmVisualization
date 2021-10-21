@@ -7,14 +7,9 @@ using Performance;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
-using Slider = UnityEngine.UI.Slider;
 
 public class GameManager : MonoBehaviour
 {
-    public         Slider      min;
-    public         Slider      max;
-    public         Slider      count;
     private static GameObject  _progress;
     private static GameObject  _space;
     private static GameObject  _spacePrefab;
@@ -22,6 +17,22 @@ public class GameManager : MonoBehaviour
     private static GameObject  _codeLinePanel;
     private static GameObject  _menu;
     private static GameManager _instance;
+    public         Slider      min;
+    public         Slider      max;
+    public         Slider      count;
+
+    // private void OnGUI()
+    // {
+    //     if ( Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.SysReq )
+    //     {
+    //         ScreenCapture.CaptureScreenshot( @"X:\Temp.png" );
+    //         Debug.Log( Application.dataPath );
+    //     }
+    // }
+
+    public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
+
+    public static int[] Numbers { get; private set; } = { };
 
     private void Awake()
     {
@@ -40,29 +51,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if ( Input.GetKeyUp( KeyCode.C ) )
-        {
-            _codeLinePanel.SetActive( !_codeLinePanel.activeSelf );
-        }
+        if ( Input.GetKeyUp( KeyCode.C ) ) _codeLinePanel.SetActive( !_codeLinePanel.activeSelf );
 
-        if ( Input.GetKeyUp( KeyCode.M ) )
-        {
-            _menu.GetComponent<SliderMenu>().ShowHideMenu();
-        }
+        if ( Input.GetKeyUp( KeyCode.M ) ) _menu.GetComponent<SliderMenu>().ShowHideMenu();
     }
-
-    // private void OnGUI()
-    // {
-    //     if ( Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.SysReq )
-    //     {
-    //         ScreenCapture.CaptureScreenshot( @"X:\Temp.png" );
-    //         Debug.Log( Application.dataPath );
-    //     }
-    // }
-
-    public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
-
-    public static int[] Numbers { get; private set; } = { };
 
     public void GenObjects()
     {
@@ -81,7 +73,7 @@ public class GameManager : MonoBehaviour
         for ( var i = 0; i < Numbers.Length; i++ )
         {
             var cube = Instantiate( _cubePrefab,
-                new Vector3( i * CubeController.Gap, 0f, 0f ),
+                new Vector3( i * Config.HorizontalGap, 0f, 0f ),
                 Quaternion.identity, _space.transform );
             cube.GetComponent<CubeController>().SetValue( Numbers[i] );
             Cubes.Add( cube );
@@ -98,10 +90,7 @@ public class GameManager : MonoBehaviour
 
         var result         = new int[count];
         var numbersInOrder = new List<int>();
-        for ( var x = minNum; x < maxNum; x++ )
-        {
-            numbersInOrder.Add( x );
-        }
+        for ( var x = minNum; x < maxNum; x++ ) numbersInOrder.Add( x );
 
         for ( var x = 0; x < count; x++ )
         {
@@ -125,9 +114,9 @@ public class GameManager : MonoBehaviour
         CompleteBinaryTree.ClearTree();
         PerformanceQueue.Course.Clear();
         PerformanceQueue.Rewind.Clear();
-        CubeController.index = 0;
+        CubeController.courseIndex = 0;
         CubeController.inPlay = false;
-        _progress.GetComponent<Slider>().value = 0;
+        CubeController.rewindIndex = 0;
         _progress.GetComponent<Slider>().maxValue = 0;
     }
 
@@ -145,6 +134,14 @@ public class GameManager : MonoBehaviour
             _list = new List<T>();
         }
 
+        public int Count => _list.Count;
+
+        public T this[ int index ]
+        {
+            get => _list[index];
+            set => _list[index] = value;
+        }
+
         public void Add( T obj )
         {
             _list.Add( obj );
@@ -154,8 +151,6 @@ public class GameManager : MonoBehaviour
         {
             _list.Clear();
         }
-
-        public int Count => _list.Count;
 
         public void Swap( int firstIndex, int secondIndex )
         {
@@ -172,12 +167,6 @@ public class GameManager : MonoBehaviour
 
             _list.RemoveAt( left );
             _list.Insert( left, rightElement );
-        }
-
-        public T this[ int index ]
-        {
-            get => _list[index];
-            set => _list[index] = value;
         }
     }
 }

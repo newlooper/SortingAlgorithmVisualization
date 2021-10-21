@@ -19,7 +19,7 @@ namespace Performance
 
             SetPillarMaterial( cubes[left], cubeSelected );
             SetPillarMaterial( cubes[right], cubeSelected );
-            yield return new WaitForSeconds( DefaultDelay / _speed.value );
+            yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
 
             SetPillarMaterial( cubes[left], cubeDefault );
             SetPillarMaterial( cubes[right], cubeDefault );
@@ -42,7 +42,7 @@ namespace Performance
             var onePos = CompleteBinaryTree.treeNodes[left].transform.position;
             var twoPos = CompleteBinaryTree.treeNodes[right].transform.position;
 
-            var distancePillar = Math.Abs( right - left ) * Gap;
+            var distancePillar = Math.Abs( right - left ) * Config.HorizontalGap;
             var nodeSpeed      = Vector3.Distance( onePos, twoPos ) / ( distancePillar / _speed.value );
 
             ////////////////////
@@ -116,8 +116,8 @@ namespace Performance
         {
             return Move( mvObj, new[]
             {
-                new Pace( mvObj.transform.position + new Vector3( 0, 0, Gap ), pace.MovingMaterial ),
-                new Pace( target + new Vector3( 0, 0, Gap ), pace.MovingMaterial ),
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
                 new Pace( target, pace.MovingMaterial ),
             } );
         }
@@ -126,8 +126,8 @@ namespace Performance
         {
             return Move( mvObj, new[]
             {
-                new Pace( mvObj.transform.position + new Vector3( 0, 0, -Gap ), pace.MovingMaterial ),
-                new Pace( target + new Vector3( 0, 0, -Gap ), pace.MovingMaterial ),
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
                 new Pace( target, pace.MovingMaterial ),
             } );
         }

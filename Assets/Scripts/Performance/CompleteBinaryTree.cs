@@ -45,7 +45,7 @@ namespace Performance
                             _treeContainer.transform.position.z ),
                         Quaternion.identity );
                     node.transform.SetParent( _treeContainer.transform );
-                    node.transform.Find( "Cube" ).transform.localScale = new Vector3( 1, 1, 1 );
+                    node.transform.Find( "Cube" ).transform.localScale = Vector3.one;
                     treeNodes.Add( node );
                 }
             }

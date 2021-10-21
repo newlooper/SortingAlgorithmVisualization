@@ -15,10 +15,12 @@ namespace Performance
         JumpOut,
         JumpIn,
         SwapCopy,
-        Auxiliary,
-        AuxiliaryBack,
+        MergePick,
+        MergeBack,
         MergeHistory,
         SwapHeap,
         CodeLine,
+        RadixPick,
+        RadixBack,
     }
 }

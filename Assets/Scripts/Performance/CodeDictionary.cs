@@ -6,24 +6,22 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using TMPro;
+using UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Performance
 {
     public class CodeDictionary : MonoBehaviour
     {
-        public static           bool                                           inPlay  = false;
+        public static           bool                                           inPlay     = false;
         private static readonly List<string>                                   MarkLines  = new List<string>();
         private static readonly Regex                                          MarksRegex = new Regex( @"</?mark[^>]*>" );
-        private static          Dropdown                                       _algDropdown;
         private static          List<string>                                   _keys;
         private static          Dictionary<string, string>                     _codeLines;
         private static          Dictionary<string, Dictionary<string, string>> _codeDict;
 
         private void Start()
         {
-            _algDropdown = GameObject.Find( "Algorithm" ).GetComponent<Dropdown>();
             var json = Resources.Load<TextAsset>( "Json/CodeLines" );
             _codeDict = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(
                 json.text,
@@ -34,7 +32,7 @@ namespace Performance
         {
             if ( inPlay )
             {
-                _codeLines = _codeDict[_algDropdown.options[_algDropdown.value].text];
+                _codeLines = _codeDict[Sort.className];
                 _keys = new List<string>( _codeLines.Keys );
                 foreach ( var key in _keys )
                 {
@@ -47,6 +45,7 @@ namespace Performance
                                 case "Swap":
                                 case "Swap2":
                                 case "Copy":
+                                case "RadixPick":
                                     _codeLines[key] = "<mark=#00ff1255>" + _codeLines[key] + "</mark>";
                                     break;
                                 case "Selected":

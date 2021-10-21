@@ -83,6 +83,7 @@ namespace Performance
         public string CodeLineKey { get; private set; }
         public int    Cursor      { get; private set; }
         public string Algorithm   { get; private set; }
+        public int    Bucket      { get; private set; }
     }
 
     public class Pace

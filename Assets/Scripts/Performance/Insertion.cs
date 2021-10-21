@@ -3,15 +3,12 @@
 // license that can be found in the LICENSE file.
 
 using System.Collections;
-using System.Collections.Concurrent;
 using UnityEngine;
 
 namespace Performance
 {
     public partial class CubeController
     {
-        private static readonly ConcurrentQueue<int> Image = new ConcurrentQueue<int>();
-
         private static IEnumerator JumpOut( int from, Step step )
         {
             var cube   = GameManager.Cubes[from];
@@ -25,7 +22,7 @@ namespace Performance
         private static IEnumerator JumpIn( Step step )
         {
             var cube   = GameManager.Cubes[step.Left];
-            var target = new Vector3( step.Left * Gap, 0, 0f );
+            var target = new Vector3( step.Left * Config.HorizontalGap, 0, 0f );
             yield return Move( cube, new[] {new Pace( target, step.Pace.MovingMaterial )} );
             SetPillarMaterial( cube, Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
@@ -42,8 +39,8 @@ namespace Performance
 
             ////////////////////
             // 绑定移动前的固定位置
-            var newLeft  = cubes[left].transform.position + new Vector3( Gap, 0, 0 );
-            var newRight = cubes[right].transform.position + new Vector3( -Gap, 0, 0 );
+            var newLeft  = cubes[left].transform.position + new Vector3( Config.HorizontalGap, 0, 0 );
+            var newRight = cubes[right].transform.position + new Vector3( -Config.HorizontalGap, 0, 0 );
 
             CodeDictionary.AddMarkLine( step.CodeLineKey );
             ////////////
@@ -90,7 +87,7 @@ namespace Performance
         {
             var step = new Step
             {
-                Left = @from,
+                Left = from,
                 PerformanceEffect = PerformanceEffect.JumpOut,
                 CodeLineKey = key,
                 Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )

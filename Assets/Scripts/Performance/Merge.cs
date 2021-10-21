@@ -3,19 +3,22 @@
 // license that can be found in the LICENSE file.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using UnityEngine;
 
 namespace Performance
 {
     public partial class CubeController
     {
+        private static readonly ConcurrentQueue<Step> Image = new ConcurrentQueue<Step>();
+
         private static IEnumerator SimpleMove( int from, int to, Step step )
         {
             CodeDictionary.AddMarkLine( step.CodeLineKey );
-            Image.Enqueue( from );
+            Image.Enqueue( step );
             yield return Move( GameManager.Cubes[from], new[]
             {
-                new Pace( new Vector3( to * Gap, 0, -2f ), step.Pace.MovingMaterial )
+                new Pace( new Vector3( to * Config.HorizontalGap, 0, Config.OutDistance ), step.Pace.MovingMaterial )
             } );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
         }
@@ -23,14 +26,14 @@ namespace Performance
         private static IEnumerator AuxiliaryBack( Step step )
         {
             CodeDictionary.AddMarkLine( step.CodeLineKey );
-            while ( Image.TryDequeue( out var idx ) )
+            while ( Image.TryDequeue( out var fromTo ) )
             {
-                var cube = GameManager.Cubes[idx];
+                var cube = GameManager.Cubes[fromTo.Left];
                 if ( cube.transform.position.z != 0 )
                 {
                     yield return Move( cube, new[]
                     {
-                        new Pace( cube.transform.position + new Vector3( 0, 0, 2f ), step.Pace.MovingMaterial )
+                        new Pace( cube.transform.parent.position + new Vector3( fromTo.Right * Config.HorizontalGap, 0, 0f ), step.Pace.MovingMaterial )
                     } );
                 }
             }
@@ -46,9 +49,9 @@ namespace Performance
         {
             var step = new Step
             {
-                Left = @from,
+                Left = from,
                 Right = to,
-                PerformanceEffect = PerformanceEffect.Auxiliary,
+                PerformanceEffect = PerformanceEffect.MergePick,
                 CodeLineKey = key,
                 Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
             };
@@ -60,7 +63,7 @@ namespace Performance
             var step = new Step
             {
                 Snapshot = snapshot,
-                PerformanceEffect = PerformanceEffect.AuxiliaryBack,
+                PerformanceEffect = PerformanceEffect.MergeBack,
                 CodeLineKey = key,
                 Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
             };

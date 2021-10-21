@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 using System.Collections;
+using System.Threading;
 using Performance;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,11 +13,12 @@ namespace UI
 {
     public class ProgressBar : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
-        public GameObject btnPlay;
-        public GameObject btnPause;
-        public GameObject stepText;
-
         private static ProgressBar _instance;
+        public         GameObject  btnPlay;
+        public         GameObject  btnPause;
+        public         GameObject  stepText;
+        public         GameObject  courseProgress;
+        public         GameObject  courseStepText;
 
         private void Awake()
         {
@@ -25,9 +27,17 @@ namespace UI
 
         private void Update()
         {
-            stepText.GetComponent<Text>().text = GetComponent<Slider>().value +
+            GetComponent<Slider>().value = CubeController.rewindIndex;
+            GetComponent<Slider>().maxValue = PerformanceQueue.Rewind.Count;
+            stepText.GetComponent<Text>().text = CubeController.rewindIndex +
                                                  " / " + PerformanceQueue.Rewind.Count +
-                                                 " <size=10>Swap &| Write</size>";
+                                                 " <size=10>Phased Modification</size>";
+
+            courseProgress.GetComponent<Slider>().value = CubeController.courseIndex;
+            courseProgress.GetComponent<Slider>().maxValue = PerformanceQueue.Course.Count;
+            courseStepText.GetComponent<Text>().text = CubeController.courseIndex +
+                                                       " / " + PerformanceQueue.Course.Count +
+                                                       " <size=10>Total Steps</size>";
         }
 
         public void OnDrag( PointerEventData eventData )
@@ -40,16 +50,25 @@ namespace UI
             StartCoroutine( PauseAt( (int)GetComponent<Slider>().value ) );
         }
 
-        public static void SwitchPlayPause()
+        public static void SetPlayerButtonStatus( int status )
         {
-            _instance.btnPlay.SetActive( true );
-            _instance.btnPause.SetActive( false );
+            switch ( status )
+            {
+                case 0: // 停止播放时的状态
+                    _instance.btnPlay.SetActive( true );
+                    _instance.btnPause.SetActive( false );
+                    break;
+                case 1: // 播放中的状态
+                    _instance.btnPlay.SetActive( false );
+                    _instance.btnPause.SetActive( true );
+                    break;
+            }
         }
 
         public IEnumerator PauseAt( int rewindCursor )
         {
-            btnPlay.SetActive( true );
-            btnPause.SetActive( false );
+            GameObject.Find( "PlayBar" ).GetComponent<PlayBar>().StopProducer();
+            SetPlayerButtonStatus( 0 );
 
             CubeController.canPlay = false;
             Time.timeScale = 10;
@@ -57,33 +76,40 @@ namespace UI
             Time.timeScale = 0;
             CubeController.canPlay = true;
 
-            if ( PerformanceQueue.Rewind.Count == 0 )
-            {
-                yield break;
-            }
+            if ( PerformanceQueue.Rewind.Count == 0 ) yield break;
+
+            CubeController.rewindIndex = rewindCursor;
 
             if ( rewindCursor == PerformanceQueue.Rewind.Count )
             {
-                GameManager.GenObjectsFromArray( PerformanceQueue.Rewind[rewindCursor - 1].Snapshot );
-                CubeController.index = PerformanceQueue.Course.Count;
-                switch ( PerformanceQueue.Rewind[rewindCursor - 1].Algorithm )
-                {
-                    case "Heap":
-                        CompleteBinaryTree.BuildTree();
-                        break;
-                }
+                var step = PerformanceQueue.Rewind[rewindCursor - 1];
+                GameManager.GenObjectsFromArray( step.Snapshot );
+                Interlocked.Exchange( ref CubeController.courseIndex, PerformanceQueue.Course.Count );
+                Ending( PerformanceQueue.Rewind[rewindCursor - 1].Algorithm );
             }
             else
             {
                 var step = PerformanceQueue.Rewind[rewindCursor];
                 GameManager.GenObjectsFromArray( PerformanceQueue.Course[step.Cursor].Snapshot );
-                CubeController.index = step.Cursor;
-                switch ( step.Algorithm )
-                {
-                    case "Heap":
-                        CompleteBinaryTree.BuildTree();
-                        break;
-                }
+                Interlocked.Exchange( ref CubeController.courseIndex, step.Cursor );
+                Ending( step.Algorithm );
+            }
+
+            if ( rewindCursor == 0 )
+            {
+                CubeController.courseIndex = 0;
+            }
+        }
+
+        private void Ending( string algorithm )
+        {
+            switch ( algorithm )
+            {
+                case "Heap":
+                    CompleteBinaryTree.BuildTree();
+                    break;
+                case "Radix":
+                    break;
             }
         }
     }
