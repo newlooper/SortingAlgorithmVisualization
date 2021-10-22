@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Performance;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,17 +36,12 @@ namespace UI
             } );
             sortOnly.Start(); // sort only for testing real performance of current algorithm
 
-            CompleteBinaryTree.ClearTree();
-            PerformanceQueue.Course.Clear();
-            PerformanceQueue.Rewind.Clear();
+            GameManager.Rest();
             GameManager.GenObjectsFromArray( GameManager.Numbers );
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
 
             PrintArray( GameManager.Numbers, " <- After visual sorting" );
 
-            CubeController.courseIndex = 0;
-            CubeController.inPlay = false;
-            CubeController.rewindIndex = 0;
             playBar.GetComponent<PlayBar>().Play();
         }
 

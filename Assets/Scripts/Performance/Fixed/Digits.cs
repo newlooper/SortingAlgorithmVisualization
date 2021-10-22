@@ -30,14 +30,7 @@ namespace Performance.Fixed
         // Update is called once per frame
         private void Update()
         {
-            if ( Sort.className == "Radix" )
-            {
-                digitsBox.SetActive( true );
-            }
-            else
-            {
-                digitsBox.SetActive( false );
-            }
+            digitsBox.SetActive( Sort.className == "Radix" );
         }
     }
 }

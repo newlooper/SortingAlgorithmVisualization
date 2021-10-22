@@ -28,7 +28,7 @@ namespace Performance
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
 
-        private static IEnumerator SwapCopy( int left, int right, Step step )
+        private static IEnumerator SwapRelay( int left, int right, Step step )
         {
             var cubes      = GameManager.Cubes;
             var cubeSorted = Resources.Load<Material>( "Materials/CubeSelectedBlue" );
@@ -106,14 +106,14 @@ namespace Performance
             return step;
         }
 
-        public static Step CreateStepForSwapCopy( int[] snapshot, int left, int right, string key = "Swap" )
+        public static Step CreateStepForSwapRelay( int[] snapshot, int left, int right, string key = "Swap" )
         {
             var step = new Step
             {
                 Left = left,
                 Right = right,
                 Snapshot = snapshot,
-                PerformanceEffect = PerformanceEffect.SwapCopy,
+                PerformanceEffect = PerformanceEffect.SwapRelay,
                 CodeLineKey = key,
                 Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeInMoving" ) )
             };

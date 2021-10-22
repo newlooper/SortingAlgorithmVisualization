@@ -101,8 +101,8 @@ namespace Performance
                 case PerformanceEffect.JumpIn:
                     yield return JumpIn( step );
                     break;
-                case PerformanceEffect.SwapCopy:
-                    yield return SwapCopy( step.Left, step.Right, step );
+                case PerformanceEffect.SwapRelay:
+                    yield return SwapRelay( step.Left, step.Right, step );
                     Interlocked.Increment( ref rewindIndex );
                     break;
                 case PerformanceEffect.MergePick:

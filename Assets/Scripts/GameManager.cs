@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameObject  _progress;
     private static GameObject  _space;
     private static GameObject  _spacePrefab;
     private static GameObject  _cubePrefab;
@@ -20,15 +19,6 @@ public class GameManager : MonoBehaviour
     public         Slider      min;
     public         Slider      max;
     public         Slider      count;
-
-    // private void OnGUI()
-    // {
-    //     if ( Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.SysReq )
-    //     {
-    //         ScreenCapture.CaptureScreenshot( @"X:\Temp.png" );
-    //         Debug.Log( Application.dataPath );
-    //     }
-    // }
 
     public static MyList<GameObject> Cubes { get; private set; } = new MyList<GameObject>();
 
@@ -40,7 +30,6 @@ public class GameManager : MonoBehaviour
         _cubePrefab = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
         _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
         _menu = GameObject.Find( "SliderMenu" );
-        _progress = GameObject.Find( "Progress" );
         _instance = this;
     }
 
@@ -115,9 +104,8 @@ public class GameManager : MonoBehaviour
         PerformanceQueue.Course.Clear();
         PerformanceQueue.Rewind.Clear();
         CubeController.courseIndex = 0;
-        CubeController.inPlay = false;
         CubeController.rewindIndex = 0;
-        _progress.GetComponent<Slider>().maxValue = 0;
+        CubeController.inPlay = false;
     }
 
     public class MyList<T>

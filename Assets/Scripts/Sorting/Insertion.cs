@@ -20,7 +20,7 @@ namespace Sorting
                     PerformanceQueue.Course.Add( Step.CreateStepForCompare( j - 1 ) );
                     if ( arr[j - 1] > arr[j] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwapCopy( arr.Clone() as int[], j, j - 1 ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSwapRelay( arr.Clone() as int[], j, j - 1 ) );
                         ( arr[j - 1], arr[j] ) = ( arr[j], arr[j - 1] );
                         k = j - 1;
                         PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], j, j - 1, "Swap",

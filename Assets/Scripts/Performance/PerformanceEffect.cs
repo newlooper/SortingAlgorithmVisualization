@@ -14,7 +14,7 @@ namespace Performance
         UnSelectOne,
         JumpOut,
         JumpIn,
-        SwapCopy,
+        SwapRelay,
         MergePick,
         MergeBack,
         MergeHistory,
