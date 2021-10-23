@@ -298,5 +298,26 @@
     "Swap": "\t\t( <color=#00ffffff>arr</color>[min], <color=#00ffffff>arr</color>[i] ) = ( <color=#00ffffff>arr</color>[i], <color=#00ffffff>arr</color>[min] );",
     "Line15": "\t}",
     "Line16": "}"
+  },
+  "Shell": {
+    "Line1": "<color=blue>public</color> <color=blue>static</color> <color=blue>void</color> Sort( <color=blue>int</color>[] <color=#00ffffff>arr</color> )",
+    "Line2": "{",
+    "Line3": "\t<color=blue>var</color> length = <color=#00ffffff>arr</color>.Length;",
+    "For": "\t<color=blue>for</color> ( <color=blue>var</color> step = length / <color=red>2</color>; step >= <color=red>1</color>; step /= <color=red>2</color> )",
+    "Line5": "\t{",
+    "For2": "\t\t<color=blue>for</color> ( <color=blue>var</color> i = step; i < length; i++ )",
+    "Line7": "\t\t{",
+    "Line8": "\t\t\t<color=blue>var</color> temp = <color=#00ffffff>arr</color>[i];",
+    "Line9": "\t\t\t<color=blue>var</color> j    = i - step;",
+    "While": "\t\t\t<color=blue>while</color> ( j >= <color=red>0</color> && <color=#00ffffff>arr</color>[j] > temp )",
+    "Line11": "\t\t\t{",
+    "Swap": "\t\t\t\t<color=#00ffffff>arr</color>[j + step] = <color=#00ffffff>arr</color>[j];",
+    "Line13": "\t\t\t\tj -= step;",
+    "Line14": "\t\t\t}",
+    "Line15": "",
+    "Line16": "\t\t\t<color=#00ffffff>arr</color>[j + step] = temp;",
+    "Line17": "\t\t}",
+    "Line18": "\t}",
+    "Line19": "}"
   }
 }

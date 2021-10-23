@@ -21,6 +21,7 @@ A Unity Project About Sorting Algorithm Visualization
 - Quick
 - Radix
 - Selection
+- Shell
 - TODO...
 
 ### UI
