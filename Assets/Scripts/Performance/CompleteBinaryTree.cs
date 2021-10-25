@@ -3,20 +3,20 @@
 // license that can be found in the LICENSE file.
 
 using System;
+using UI;
 using UnityEngine;
 
 namespace Performance
 {
     public class CompleteBinaryTree : MonoBehaviour
     {
-        private static readonly GameObject                     TreeContainerPrefab = Resources.Load<GameObject>( "Prefabs/TreeContainer" );
-        private static          GameObject                     _treeContainer;
-        public static           GameManager.MyList<GameObject> treeNodes = new GameManager.MyList<GameObject>();
+        private static GameObject                     _treeContainer;
+        public static  GameManager.MyList<GameObject> treeNodes = new GameManager.MyList<GameObject>();
 
         public static void BuildTree()
         {
             ClearTree();
-            _treeContainer = Instantiate( TreeContainerPrefab );
+            _treeContainer = Instantiate( Resources.Load<GameObject>( "Prefabs/TreeContainer" ) );
 
             const int storeyHeight = 3;
             var       heapSize     = GameManager.Cubes.Count;
@@ -69,9 +69,22 @@ namespace Performance
             }
         }
 
+        public static void ResetTree()
+        {
+            for ( var i = 0; i < treeNodes.Count; i++ )
+            {
+                treeNodes[i].GetComponent<CubeController>().SetValue( GameManager.Numbers[i], false );
+            }
+        }
+
         public static void ClearTree()
         {
             Destroy( _treeContainer );
+        }
+
+        private void Update()
+        {
+            _treeContainer.SetActive( Sort.className == "Heap" );
         }
     }
 }

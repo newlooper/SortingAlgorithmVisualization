@@ -38,9 +38,10 @@ namespace Performance
             foreach ( var btn in buttons ) btn.GetComponentInChildren<Text>().text = str;
         }
 
-        public void SetValue( int value )
+        public void SetValue( int value, bool changeScale = true )
         {
-            scaler.localScale = new Vector3( 1, value * Config.CubeScale, 1 );
+            if ( changeScale )
+                scaler.localScale = new Vector3( 1, value * Config.CubeScale, 1 );
             SetButtonText( value.ToString() );
             _value = value;
         }
@@ -136,7 +137,7 @@ namespace Performance
             }
         }
 
-        private static void SetPillarMaterial( GameObject go, Material mat )
+        public static void SetPillarMaterial( GameObject go, Material mat )
         {
             go.transform.Find( "Cube" ).transform.Find( "Pillar" ).GetComponent<MeshRenderer>().material = mat;
         }

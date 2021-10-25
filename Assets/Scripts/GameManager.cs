@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     private static GameObject  _cubePrefab;
     private static GameObject  _codeLinePanel;
     private static GameObject  _menu;
+    private static Material    _defaultMat;
     private static GameManager _instance;
     public         Slider      min;
     public         Slider      max;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
         _cubePrefab = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
         _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
         _menu = GameObject.Find( "SliderMenu" );
+        _defaultMat = Resources.Load<Material>( "Materials/Cube" );
         _instance = this;
     }
 
@@ -48,11 +50,18 @@ public class GameManager : MonoBehaviour
     public void GenObjects()
     {
         Rest();
-        GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ) );
+        CompleteBinaryTree.ClearTree();
+        GenObjectsFromArray( GetUniqueRandomArray( (int)min.value, (int)max.value, (int)count.value ), false );
     }
 
-    public static void GenObjectsFromArray( int[] arr )
+    public static void GenObjectsFromArray( int[] arr, bool reuse = true )
     {
+        if ( reuse )
+        {
+            Reuse( arr );
+            return;
+        }
+
         Destroy( _space );
         _space = Instantiate( _spacePrefab );
 
@@ -66,6 +75,17 @@ public class GameManager : MonoBehaviour
                 Quaternion.identity, _space.transform );
             cube.GetComponent<CubeController>().SetValue( Numbers[i] );
             Cubes.Add( cube );
+        }
+    }
+
+    private static void Reuse( int[] arr )
+    {
+        Numbers = arr;
+        for ( var i = 0; i < Numbers.Length; i++ )
+        {
+            Cubes[i].transform.position = new Vector3( i * Config.HorizontalGap, 0f, 0f );
+            Cubes[i].GetComponent<CubeController>().SetValue( Numbers[i] );
+            CubeController.SetPillarMaterial( Cubes[i], _defaultMat );
         }
     }
 
@@ -100,7 +120,6 @@ public class GameManager : MonoBehaviour
 
     public static void Rest()
     {
-        CompleteBinaryTree.ClearTree();
         PerformanceQueue.Course.Clear();
         PerformanceQueue.Rewind.Clear();
         CubeController.courseIndex = 0;

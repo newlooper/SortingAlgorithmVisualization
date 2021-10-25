@@ -106,7 +106,7 @@ namespace UI
             switch ( algorithm )
             {
                 case "Heap":
-                    CompleteBinaryTree.BuildTree();
+                    CompleteBinaryTree.ResetTree();
                     break;
                 case "Radix":
                     break;
