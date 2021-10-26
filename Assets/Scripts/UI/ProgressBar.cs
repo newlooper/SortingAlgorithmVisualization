@@ -30,14 +30,16 @@ namespace UI
             GetComponent<Slider>().value = CubeController.rewindIndex;
             GetComponent<Slider>().maxValue = PerformanceQueue.Rewind.Count;
             stepText.GetComponent<Text>().text = CubeController.rewindIndex +
-                                                 " / " + PerformanceQueue.Rewind.Count +
-                                                 " <size=10>Phased Modification</size>";
+                                                 " / " + PerformanceQueue.Rewind.Count + " <size=10>" +
+                                                 Lean.Localization.LeanLocalization.GetTranslationText( "UI.ProgressBar.Modification" ) +
+                                                 "</size>";
 
             courseProgress.GetComponent<Slider>().value = CubeController.courseIndex;
             courseProgress.GetComponent<Slider>().maxValue = PerformanceQueue.Course.Count;
             courseStepText.GetComponent<Text>().text = CubeController.courseIndex +
-                                                       " / " + PerformanceQueue.Course.Count +
-                                                       " <size=10>Total Steps</size>";
+                                                       " / " + PerformanceQueue.Course.Count + " <size=10>" +
+                                                       Lean.Localization.LeanLocalization.GetTranslationText( "UI.ProgressBar.TotalSteps" ) +
+                                                       "</size>";
         }
 
         public void OnDrag( PointerEventData eventData )

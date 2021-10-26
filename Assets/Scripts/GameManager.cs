@@ -3,6 +3,8 @@
 // license that can be found in the LICENSE file.
 
 using System.Collections.Generic;
+using System.Linq;
+using Lean.Localization;
 using Performance;
 using UI;
 using UnityEngine;
@@ -45,6 +47,14 @@ public class GameManager : MonoBehaviour
         if ( Input.GetKeyUp( KeyCode.C ) ) _codeLinePanel.SetActive( !_codeLinePanel.activeSelf );
 
         if ( Input.GetKeyUp( KeyCode.M ) ) _menu.GetComponent<SliderMenu>().ShowHideMenu();
+
+        if ( Input.GetKeyUp( KeyCode.L ) )
+        {
+            var currentLanguage = GameObject.Find( "LeanLocalization" ).GetComponent<LeanLocalization>().CurrentLanguage;
+            var names           = LeanLocalization.CurrentLanguages.Keys.ToList();
+            var nextIndex       = ( names.IndexOf( currentLanguage ) + 1 ) % LeanLocalization.CurrentLanguages.Count;
+            LeanLocalization.SetCurrentLanguageAll( names[nextIndex] );
+        }
     }
 
     public void GenObjects()

@@ -37,7 +37,7 @@ namespace UI
             sortOnly.Start(); // sort only for testing real performance of current algorithm
 
             GameManager.Rest();
-            GameManager.GenObjectsFromArray( GameManager.Numbers );
+            GameManager.GenObjectsFromArray( GameManager.Numbers, false );
             CallSortByClassName( "Sorting." + className, GameManager.Numbers ); // sorting visualization
 
             PrintArray( GameManager.Numbers, " <- After visual sorting" );
