@@ -26,7 +26,7 @@ namespace Performance
                 new Stack<int>(),
                 new Stack<int>(),
                 new Stack<int>(),
-                new Stack<int>(),
+                new Stack<int>()
             };
         }
 
@@ -51,8 +51,7 @@ namespace Performance
             CodeDictionary.AddMarkLine( step.CodeLineKey );
             var i = 0;
             foreach ( var queue in _buckets )
-            {
-                while ( queue.Count > 0 )
+                while ( queue.Count > 0 && canPlay )
                 {
                     var idx  = queue.Pop();
                     var cube = GameManager.Cubes[idx];
@@ -61,7 +60,6 @@ namespace Performance
                         new Vector3( 1, cube.GetComponent<CubeController>()._value * Config.CubeScale, 1 ),
                         step );
                 }
-            }
 
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
             GameManager.GenObjectsFromArray( step.Snapshot );
@@ -76,7 +74,7 @@ namespace Performance
             SetPillarMaterial( cube, step.Pace.MovingMaterial );
 
             var i = 0f;
-            while ( i < 1f )
+            while ( i < 1f && canPlay )
             {
                 var rate = _speed.value / distance;
                 i += Time.deltaTime * rate;
@@ -100,7 +98,7 @@ namespace Performance
                 Bucket = bucket,
                 PerformanceEffect = PerformanceEffect.RadixPick,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/Cube" ) )
+                Pace = new Pace( null, Config.DefaultCube )
             };
             return step;
         }
@@ -112,7 +110,7 @@ namespace Performance
                 Snapshot = snapshot,
                 PerformanceEffect = PerformanceEffect.RadixBack,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/Cube" ) )
+                Pace = new Pace( null, Config.DefaultCube )
             };
             return step;
         }

@@ -25,14 +25,11 @@ namespace Performance
         {
             var cubes        = GameManager.Cubes;
             var cubeSelected = step.Pace.SelectedMaterial;
-            var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );
+            var cubeDefault  = Config.DefaultCube;
 
             CodeDictionary.AddMarkLine( step.CodeLineKey );
             SetPillarMaterial( cubes[index], cubeSelected );
-            if ( index - 1 > step.Right )
-            {
-                SetPillarMaterial( cubes[index - 1], cubeDefault );
-            }
+            if ( index - 1 > step.Right ) SetPillarMaterial( cubes[index - 1], cubeDefault );
 
             yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
             CodeDictionary.RemoveMarkLine( step.CodeLineKey );
@@ -42,7 +39,7 @@ namespace Performance
         {
             var cubes        = GameManager.Cubes;
             var cubeSelected = step.Pace.SelectedMaterial;
-            var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );
+            var cubeDefault  = Config.DefaultCube;
 
             CodeDictionary.AddMarkLine( step.CodeLineKey );
             SetPillarMaterial( cubes[oldMin], cubeDefault );
@@ -63,8 +60,8 @@ namespace Performance
                 PerformanceEffect = PerformanceEffect.SelectOne,
                 CodeLineKey = key,
                 Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelectedRed" ),
-                    Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                    Config.RedCube,
+                    Config.RedCube )
             };
             return step;
         }
@@ -77,7 +74,7 @@ namespace Performance
                 Right = newIndex,
                 PerformanceEffect = PerformanceEffect.NewMin,
                 CodeLineKey = key,
-                Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelectedRed" ), null )
+                Pace = new Pace( Config.RedCube, null )
             };
             return step;
         }
@@ -90,7 +87,7 @@ namespace Performance
                 Right = currentMin,
                 PerformanceEffect = PerformanceEffect.ChangeSelection,
                 CodeLineKey = key,
-                Pace = new Pace( Resources.Load<Material>( "Materials/CubeSelected" ), null )
+                Pace = new Pace( Config.YellowCube, null )
             };
             return step;
         }
@@ -101,9 +98,7 @@ namespace Performance
             {
                 Left = index,
                 PerformanceEffect = PerformanceEffect.UnSelectOne,
-                Pace = new Pace(
-                    Resources.Load<Material>( "Materials/Cube" ),
-                    Resources.Load<Material>( "Materials/Cube" ) )
+                Pace = new Pace( Config.DefaultCube, Config.DefaultCube )
             };
             return step;
         }

@@ -13,7 +13,7 @@ namespace Performance
         private static IEnumerator HighlightTwoWithIndex( int left, int right, Step step )
         {
             var cubes        = GameManager.Cubes;
-            var cubeDefault  = Resources.Load<Material>( "Materials/Cube" );
+            var cubeDefault  = Config.DefaultCube;
             var cubeSelected = step.Pace.SelectedMaterial;
             CodeDictionary.AddMarkLine( step.CodeLineKey );
 
@@ -29,7 +29,7 @@ namespace Performance
         private static IEnumerator SwapHeapWithIndex( int left, int right, Step step )
         {
             var cubes       = GameManager.Cubes;
-            var cubeDefault = Resources.Load<Material>( "Materials/Cube" );
+            var cubeDefault = Config.DefaultCube;
 
             ////////////////////////////////
             /// 交换 List 中的元素位置
@@ -75,7 +75,7 @@ namespace Performance
         private static IEnumerator SwapWithIndex( int left, int right, Step step )
         {
             var cubes       = GameManager.Cubes;
-            var cubeDefault = Resources.Load<Material>( "Materials/Cube" );
+            var cubeDefault = Config.DefaultCube;
 
             ////////////////////////////////
             /// 交换 List 中的元素位置
@@ -106,10 +106,7 @@ namespace Performance
             /// 分路同时移动
             _instance.StartCoroutine( moveInHigh );
             _instance.StartCoroutine( moveInLow );
-            while ( moveInHigh.MoveNext() | moveInLow.MoveNext() )
-            {
-                yield return null;
-            }
+            while ( moveInHigh.MoveNext() | moveInLow.MoveNext() ) yield return null;
         }
 
         private static IEnumerator MoveInHigh( GameObject mvObj, Vector3 target, Pace pace )
@@ -118,7 +115,7 @@ namespace Performance
             {
                 new Pace( mvObj.transform.position + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
                 new Pace( target + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
-                new Pace( target, pace.MovingMaterial ),
+                new Pace( target, pace.MovingMaterial )
             } );
         }
 
@@ -128,7 +125,7 @@ namespace Performance
             {
                 new Pace( mvObj.transform.position + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
                 new Pace( target + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
-                new Pace( target, pace.MovingMaterial ),
+                new Pace( target, pace.MovingMaterial )
             } );
         }
     }

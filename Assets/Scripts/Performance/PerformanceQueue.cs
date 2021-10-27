@@ -29,7 +29,7 @@ namespace Performance
                 PerformanceEffect = PerformanceEffect.SelectTwo,
                 CodeLineKey = key,
                 Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelected" ),
+                    Config.YellowCube,
                     null )
             };
             return step;
@@ -46,8 +46,8 @@ namespace Performance
                 CodeLineKey = key,
                 Cursor = cursor,
                 Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelected" ),
-                    Resources.Load<Material>( "Materials/CubeInMoving" ) )
+                    Config.YellowCube,
+                    Config.GreenCube )
             };
             return step;
         }
@@ -63,8 +63,8 @@ namespace Performance
                 CodeLineKey = key,
                 Cursor = cursor,
                 Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelected" ),
-                    Resources.Load<Material>( "Materials/CubeInMoving" ) ),
+                    Config.YellowCube,
+                    Config.GreenCube ),
                 Algorithm = Sort.className,
             };
             return step;

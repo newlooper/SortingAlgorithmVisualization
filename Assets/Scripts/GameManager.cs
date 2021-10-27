@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     private static GameObject  _cubePrefab;
     private static GameObject  _codeLinePanel;
     private static GameObject  _menu;
-    private static Material    _defaultMat;
     private static GameManager _instance;
     public         Slider      min;
     public         Slider      max;
@@ -33,7 +32,6 @@ public class GameManager : MonoBehaviour
         _cubePrefab = Resources.Load<GameObject>( "Prefabs/CubeContainer" );
         _codeLinePanel = GameObject.FindWithTag( "CodeLinePanel" );
         _menu = GameObject.Find( "SliderMenu" );
-        _defaultMat = Resources.Load<Material>( "Materials/Cube" );
         _instance = this;
     }
 
@@ -95,7 +93,7 @@ public class GameManager : MonoBehaviour
         {
             Cubes[i].transform.position = new Vector3( i * Config.HorizontalGap, 0f, 0f );
             Cubes[i].GetComponent<CubeController>().SetValue( Numbers[i] );
-            CubeController.SetPillarMaterial( Cubes[i], _defaultMat );
+            CubeController.SetPillarMaterial( Cubes[i], Config.DefaultCube );
         }
     }
 

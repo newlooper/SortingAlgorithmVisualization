@@ -146,12 +146,13 @@ namespace Performance
         {
             foreach ( var pace in paces )
             {
+                if ( !canPlay ) yield break;
                 var speed = _speed.value;
                 if ( pace.Speed != 0 ) speed = pace.Speed;
 
                 SetPillarMaterial( from, pace.MovingMaterial );
 
-                while ( from.transform.position != pace.Target )
+                while ( from.transform.position != pace.Target && canPlay )
                 {
                     from.transform.position = Vector3.MoveTowards(
                         from.transform.position,

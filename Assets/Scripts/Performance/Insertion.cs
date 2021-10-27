@@ -24,14 +24,14 @@ namespace Performance
             var cube   = GameManager.Cubes[step.Left];
             var target = new Vector3( step.Left * Config.HorizontalGap, 0, 0f );
             yield return Move( cube, new[] {new Pace( target, step.Pace.MovingMaterial )} );
-            SetPillarMaterial( cube, Resources.Load<Material>( "Materials/CubeSelectedBlue" ) );
+            SetPillarMaterial( cube, Config.BlueCube );
             // yield return new WaitForSeconds( DefaultDelay / _speed.value );
         }
 
         private static IEnumerator SwapRelay( int left, int right, Step step )
         {
             var cubes      = GameManager.Cubes;
-            var cubeSorted = Resources.Load<Material>( "Materials/CubeSelectedBlue" );
+            var cubeSorted = Config.BlueCube;
 
             ////////////////////////////////
             /// 交换 List 中的元素位置
@@ -47,7 +47,7 @@ namespace Performance
             /// 展示移动效果
             var nodeA = Move( cubes[right].gameObject, new[]
             {
-                new Pace( newRight, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                new Pace( newRight, Config.RedCube )
             } );
             var nodeB = Move( cubes[left].gameObject, new[]
             {
@@ -77,8 +77,8 @@ namespace Performance
                 PerformanceEffect = PerformanceEffect.SelectOne,
                 CodeLineKey = key,
                 Pace = new Pace(
-                    Resources.Load<Material>( "Materials/CubeSelected" ),
-                    Resources.Load<Material>( "Materials/CubeSelectedBlue" ) )
+                    Config.YellowCube,
+                    Config.BlueCube )
             };
             return step;
         }
@@ -90,7 +90,7 @@ namespace Performance
                 Left = from,
                 PerformanceEffect = PerformanceEffect.JumpOut,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                Pace = new Pace( null, Config.RedCube )
             };
             return step;
         }
@@ -101,7 +101,7 @@ namespace Performance
             {
                 Left = insert,
                 PerformanceEffect = PerformanceEffect.JumpIn,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                Pace = new Pace( null, Config.RedCube )
             };
             return step;
         }
@@ -115,7 +115,7 @@ namespace Performance
                 Snapshot = snapshot,
                 PerformanceEffect = PerformanceEffect.SwapRelay,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeInMoving" ) )
+                Pace = new Pace( null, Config.GreenCube )
             };
             return step;
         }

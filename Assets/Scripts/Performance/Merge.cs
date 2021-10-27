@@ -53,7 +53,7 @@ namespace Performance
                 Right = to,
                 PerformanceEffect = PerformanceEffect.MergePick,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                Pace = new Pace( null, Config.RedCube )
             };
             return step;
         }
@@ -65,7 +65,7 @@ namespace Performance
                 Snapshot = snapshot,
                 PerformanceEffect = PerformanceEffect.MergeBack,
                 CodeLineKey = key,
-                Pace = new Pace( null, Resources.Load<Material>( "Materials/CubeSelectedRed" ) )
+                Pace = new Pace( null, Config.RedCube )
             };
             return step;
         }
