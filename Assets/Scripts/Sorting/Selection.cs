@@ -22,25 +22,22 @@ namespace Sorting
                 for ( var j = i + 1; j < n; j++ )
                 {
                     PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "For2" ) );
-                    PerformanceQueue.Course.Add( Step.CreateStepForSelection( j, min ) );
+                    PerformanceQueue.Course.Add( Step.CreateStepForChangeSelection( j, min ) );
                     if ( arr[j] < arr[min] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForChangeMin( min, j ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSelectNewMin( min, j ) );
                         min = j;
                     }
                 }
 
                 PerformanceQueue.Course.Add( Step.CreateStepForUnSelection( i ) );
                 PerformanceQueue.Course.Add( Step.CreateStepForUnSelection( n - 1 ) );
-                if ( min == i )
-                {
-                    continue;
-                }
+                if ( min == i ) continue;
 
-                PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, min ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, min ) );
                 // swap the found minimum element with the first element
                 ( arr[min], arr[i] ) = ( arr[i], arr[min] );
-                PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, min, "Swap",
+                PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, min, "Swap",
                     PerformanceQueue.Course.Count - 1 ) );
             }
         }

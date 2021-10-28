@@ -22,10 +22,10 @@ namespace Sorting
             {
                 PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "For2" ) );
                 // swap last element of the max-heap with the first element
-                PerformanceQueue.Course.Add( Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForHeapSwap( arr.Clone() as int[], 0, i ) );
                 ( arr[i], arr[0] ) = ( arr[0], arr[i] );
                 PerformanceQueue.Rewind.Add(
-                    Step.CreateStepForSwapHeap( arr.Clone() as int[], 0, i, "Swap",
+                    Step.CreateStepForHeapSwap( arr.Clone() as int[], 0, i, "Swap",
                         PerformanceQueue.Course.Count - 1 ) );
 
                 // exclude the last element from the heap and rebuild the heap 
@@ -36,7 +36,7 @@ namespace Sorting
         // Heapify function is used to build the max heap
         // max heap has maximum element at the root which means
         // first element of the array will be maximum in max heap
-        static void Heapify( int[] arr, int n, int i )
+        private static void Heapify( int[] arr, int n, int i )
         {
             var max   = i;
             var left  = 2 * i + 1;
@@ -59,10 +59,10 @@ namespace Sorting
             // if the max is not i
             if ( max != i )
             {
-                PerformanceQueue.Course.Add( Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max, "Swap2" ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForHeapSwap( arr.Clone() as int[], i, max, "Swap2" ) );
                 ( arr[i], arr[max] ) = ( arr[max], arr[i] );
                 PerformanceQueue.Rewind.Add(
-                    Step.CreateStepForSwapHeap( arr.Clone() as int[], i, max, "Swap",
+                    Step.CreateStepForHeapSwap( arr.Clone() as int[], i, max, "Swap",
                         PerformanceQueue.Course.Count - 1 ) );
                 // Recursively Heapify the affected sub-tree
                 Heapify( arr, n, max );

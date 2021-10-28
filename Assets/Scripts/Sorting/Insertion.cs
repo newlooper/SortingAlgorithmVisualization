@@ -23,7 +23,7 @@ namespace Sorting
                         PerformanceQueue.Course.Add( Step.CreateStepForSwapRelay( arr.Clone() as int[], j, j - 1 ) );
                         ( arr[j - 1], arr[j] ) = ( arr[j], arr[j - 1] );
                         k = j - 1;
-                        PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], j, j - 1, "Swap",
+                        PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], j, j - 1, "Swap",
                             PerformanceQueue.Course.Count - 1 ) );
                     }
                 }

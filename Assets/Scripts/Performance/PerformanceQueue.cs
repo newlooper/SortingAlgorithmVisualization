@@ -20,6 +20,23 @@ namespace Performance
         {
         }
 
+        public int Left { get; set; }
+
+        public int Right { get; set; }
+
+        public int[] Snapshot { get; set; }
+
+        public PerformanceEffect PerformanceEffect { get; set; }
+
+        public Pace Pace { get; set; }
+
+        public string CodeLineKey { get; private set; }
+        public int    Cursor      { get; private set; }
+        public string Algorithm   { get; private set; }
+        public int    Bucket      { get; private set; }
+
+        public float Lifetime { get; private set; } = Config.DefaultDelay;
+
         public static Step CreateStepForSelectTwo( int left, int right, string key = "Selected" )
         {
             var step = new Step
@@ -35,14 +52,14 @@ namespace Performance
             return step;
         }
 
-        public static Step CreateStepForSwap( int[] snapshot, int left, int right, string key = "Swap", int cursor = -1 )
+        public static Step CreateStepForSimpleSwap( int[] snapshot, int left, int right, string key = "Swap", int cursor = -1 )
         {
             var step = new Step
             {
                 Left = left,
                 Right = right,
                 Snapshot = snapshot,
-                PerformanceEffect = PerformanceEffect.Swap,
+                PerformanceEffect = PerformanceEffect.SimpleSwap,
                 CodeLineKey = key,
                 Cursor = cursor,
                 Pace = new Pace(
@@ -52,38 +69,23 @@ namespace Performance
             return step;
         }
 
-        public static Step CreateStepForSwapHeap( int[] snapshot, int left, int right, string key = "Swap", int cursor = -1 )
+        public static Step CreateStepForHeapSwap( int[] snapshot, int left, int right, string key = "Swap", int cursor = -1 )
         {
             var step = new Step
             {
                 Left = left,
                 Right = right,
                 Snapshot = snapshot,
-                PerformanceEffect = PerformanceEffect.SwapHeap,
+                PerformanceEffect = PerformanceEffect.HeapSwap,
                 CodeLineKey = key,
                 Cursor = cursor,
                 Pace = new Pace(
                     Config.YellowCube,
                     Config.GreenCube ),
-                Algorithm = Sort.className,
+                Algorithm = Sort.className
             };
             return step;
         }
-
-        public int Left { get; set; }
-
-        public int Right { get; set; }
-
-        public int[] Snapshot { get; set; }
-
-        public PerformanceEffect PerformanceEffect { get; set; }
-
-        public Pace Pace { get; set; }
-
-        public string CodeLineKey { get; private set; }
-        public int    Cursor      { get; private set; }
-        public string Algorithm   { get; private set; }
-        public int    Bucket      { get; private set; }
     }
 
     public class Pace

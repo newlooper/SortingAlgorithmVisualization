@@ -3,8 +3,8 @@
 // license that can be found in the LICENSE file.
 
 using System;
-using System.Collections;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using Performance;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,14 +13,13 @@ namespace UI
 {
     public class PlayBar : MonoBehaviour
     {
-        public  GameObject  btnPlay;
-        public  GameObject  btnPause;
-        public  GameObject  btnStepBegin;
-        public  GameObject  btnStepEnd;
-        public  GameObject  btnStepForward;
-        public  GameObject  btnStepBackward;
-        public  GameObject  progressBar;
-        private IEnumerator _producer;
+        public GameObject btnPlay;
+        public GameObject btnPause;
+        public GameObject btnStepBegin;
+        public GameObject btnStepEnd;
+        public GameObject btnStepForward;
+        public GameObject btnStepBackward;
+        public GameObject progressBar;
 
         public void Play()
         {
@@ -28,12 +27,8 @@ namespace UI
             if ( PerformanceQueue.Course.Count == 0 ) return;
 
             ProgressBar.SetPlayerButtonStatus( 1 );
-
-            StopProducer();
-            _producer = ContinuousPlay();
-            StartCoroutine( _producer );
-            if ( !CubeController.inPlay )
-                StartCoroutine( CubeController.Play() );
+            ContinuousPlay().Forget();
+            CubeController.Play().Forget();
         }
 
         public void Pause()
@@ -44,18 +39,18 @@ namespace UI
 
         public void StepBegin()
         {
-            StartCoroutine( progressBar.GetComponent<ProgressBar>().PauseAt( 0 ) );
+            progressBar.GetComponent<ProgressBar>().PauseAt( 0 );
         }
 
         public void StepEnd()
         {
-            StartCoroutine( progressBar.GetComponent<ProgressBar>().PauseAt( PerformanceQueue.Rewind.Count ) );
+            progressBar.GetComponent<ProgressBar>().PauseAt( PerformanceQueue.Rewind.Count );
         }
 
         public void StepBackward()
         {
             if ( CubeController.rewindIndex > 0 )
-                StartCoroutine( progressBar.GetComponent<ProgressBar>().PauseAt( Interlocked.Decrement( ref CubeController.rewindIndex ) ) );
+                progressBar.GetComponent<ProgressBar>().PauseAt( Interlocked.Decrement( ref CubeController.rewindIndex ) );
         }
 
         public void StepForward()
@@ -68,52 +63,45 @@ namespace UI
             btnPause.GetComponent<Button>().interactable = false;
             btnPlay.GetComponent<Button>().interactable = false;
 
-            StopProducer();
-            _producer = OneStep();
-            StartCoroutine( _producer );
+            OneStep().Forget();
         }
 
-        private IEnumerator ContinuousPlay()
+        private static async UniTask ContinuousPlay()
         {
             var totalSteps = PerformanceQueue.Course.Count;
 
-            while ( CubeController.courseIndex < totalSteps )
+            while ( CubeController.courseIndex < totalSteps &&
+                    CubeController.runLevel > 1 )
             {
-                var step = PerformanceQueue.Course[CubeController.courseIndex];
-                if ( !CubeController.FixedBox.Enqueue( step ) ) yield return null;
+                if ( !CubeController.FixedBox.Enqueue( PerformanceQueue.Course[CubeController.courseIndex] ) ) // producer 1
+                    await UniTask.Yield();
             }
         }
 
-        private IEnumerator OneStep()
+        private async UniTask OneStep()
         {
-            CubeController.canPlay = false;
-            yield return new WaitUntil( () => !CubeController.inAction );
-            CubeController.canPlay = true;
+            CubeController.runLevel = 1;
             Time.timeScale = 1;
-            if ( !CubeController.inPlay )
-                StartCoroutine( CubeController.Play() );
+            await UniTask.WaitUntil( () => !CubeController.inAction );
+            CubeController.runLevel = 2;
 
             try
             {
                 var step = PerformanceQueue.Course[CubeController.courseIndex];
-                CubeController.FixedBox.Enqueue( step );
+                CubeController.FixedBox.Enqueue( step ); // producer 2
+                if ( !CubeController.inPlay ) CubeController.Play().Forget();
             }
             catch ( Exception ex )
             {
                 btnStepForward.GetComponent<Button>().interactable = true;
                 Debug.Log( ex.Message );
-                yield break;
+                return;
             }
 
-            yield return new WaitUntil( () => !CubeController.inAction );
+            await UniTask.WaitUntil( () => !CubeController.inAction );
             btnStepForward.GetComponent<Button>().interactable = true;
             btnPause.GetComponent<Button>().interactable = true;
             btnPlay.GetComponent<Button>().interactable = true;
-        }
-
-        public void StopProducer()
-        {
-            if ( _producer != null ) StopCoroutine( _producer );
         }
 
         private void SetEnable( bool isEnabled )

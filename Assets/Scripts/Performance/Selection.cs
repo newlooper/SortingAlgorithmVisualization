@@ -2,54 +2,8 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-using System.Collections;
-using UnityEngine;
-
 namespace Performance
 {
-    public partial class CubeController
-    {
-        private static IEnumerator HighlightOneWithIndex( int index, Step step, float lifetime = 1f )
-        {
-            var cubes = GameManager.Cubes;
-            CodeDictionary.AddMarkLine( step.CodeLineKey );
-            SetPillarMaterial( cubes[index], step.Pace.SelectedMaterial );
-
-            yield return new WaitForSeconds( lifetime / _speed.value );
-
-            SetPillarMaterial( cubes[index], step.Pace.MovingMaterial );
-            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
-        }
-
-        private static IEnumerator HighlightSelectionWithIndex( int index, Step step )
-        {
-            var cubes        = GameManager.Cubes;
-            var cubeSelected = step.Pace.SelectedMaterial;
-            var cubeDefault  = Config.DefaultCube;
-
-            CodeDictionary.AddMarkLine( step.CodeLineKey );
-            SetPillarMaterial( cubes[index], cubeSelected );
-            if ( index - 1 > step.Right ) SetPillarMaterial( cubes[index - 1], cubeDefault );
-
-            yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
-            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
-        }
-
-        private static IEnumerator HighlightChange( int oldMin, int newMin, Step step )
-        {
-            var cubes        = GameManager.Cubes;
-            var cubeSelected = step.Pace.SelectedMaterial;
-            var cubeDefault  = Config.DefaultCube;
-
-            CodeDictionary.AddMarkLine( step.CodeLineKey );
-            SetPillarMaterial( cubes[oldMin], cubeDefault );
-            SetPillarMaterial( cubes[newMin], cubeSelected );
-
-            yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
-            CodeDictionary.RemoveMarkLine( step.CodeLineKey );
-        }
-    }
-
     public partial class Step
     {
         public static Step CreateStepForMin( int index, string key = "Selected" )
@@ -66,20 +20,20 @@ namespace Performance
             return step;
         }
 
-        public static Step CreateStepForChangeMin( int oldIndex, int newIndex, string key = "Selected3" )
+        public static Step CreateStepForSelectNewMin( int oldIndex, int newIndex, string key = "Selected3" )
         {
             var step = new Step
             {
                 Left = oldIndex,
                 Right = newIndex,
-                PerformanceEffect = PerformanceEffect.NewMin,
+                PerformanceEffect = PerformanceEffect.SelectNewMin,
                 CodeLineKey = key,
                 Pace = new Pace( Config.RedCube, null )
             };
             return step;
         }
 
-        public static Step CreateStepForSelection( int index, int currentMin, string key = "Selected2" )
+        public static Step CreateStepForChangeSelection( int index, int currentMin, string key = "Selected2" )
         {
             var step = new Step
             {
@@ -97,7 +51,8 @@ namespace Performance
             var step = new Step
             {
                 Left = index,
-                PerformanceEffect = PerformanceEffect.UnSelectOne,
+                PerformanceEffect = PerformanceEffect.SelectOne,
+                Lifetime = 0f,
                 Pace = new Pace( Config.DefaultCube, Config.DefaultCube )
             };
             return step;

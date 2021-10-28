@@ -21,9 +21,9 @@ namespace Sorting
                     PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( i, i + 1 ) );
                     if ( arr[i] > arr[i + 1] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1 ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + 1 ) );
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
-                        PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1, "Swap",
+                        PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + 1, "Swap",
                             PerformanceQueue.Course.Count - 1 ) );
                         sorted = false;
                     }
@@ -35,9 +35,9 @@ namespace Sorting
                     PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( i, i + 1, "Selected2" ) );
                     if ( arr[i] > arr[i + 1] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1, "Swap2" ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + 1, "Swap2" ) );
                         ( arr[i], arr[i + 1] ) = ( arr[i + 1], arr[i] );
-                        PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + 1, "Swap",
+                        PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + 1, "Swap",
                             PerformanceQueue.Course.Count - 1 ) );
                         sorted = false;
                     }

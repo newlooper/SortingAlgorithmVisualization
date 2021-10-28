@@ -23,10 +23,10 @@ namespace Sorting
                     {
                         PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "While" ) );
                         PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( j, j + step ) );
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], j, j + step ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], j, j + step ) );
                         var swappedArr = arr.Clone() as int[];
                         ( swappedArr[j], swappedArr[j + step] ) = ( swappedArr[j + step], swappedArr[j] );
-                        PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( swappedArr, j, j + step, "Swap", PerformanceQueue.Course.Count - 1 ) );
+                        PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( swappedArr, j, j + step, "Swap", PerformanceQueue.Course.Count - 1 ) );
                         arr[j + step] = arr[j];
                         j -= step;
                     }

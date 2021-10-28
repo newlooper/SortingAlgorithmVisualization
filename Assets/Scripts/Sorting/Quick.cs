@@ -19,16 +19,10 @@ namespace Sorting
             {
                 PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "While" ) );
                 PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "Selected" ) );
-                while ( arr[++cursorLeft] < middleValue )
-                {
-                    PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( cursorLeft, right ) );
-                }
+                while ( arr[++cursorLeft] < middleValue ) PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( cursorLeft, right ) );
 
                 PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "Selected2" ) );
-                while ( arr[--cursorRight] > middleValue )
-                {
-                    PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected2" ) );
-                }
+                while ( arr[--cursorRight] > middleValue ) PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected2" ) );
 
                 PerformanceQueue.Course.Add( Step.CreateStepForCodeLine( "IF" ) );
                 if ( cursorLeft >= cursorRight )
@@ -38,9 +32,9 @@ namespace Sorting
                 }
 
                 PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( cursorLeft, cursorRight, "Selected4" ) );
-                PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], cursorLeft, cursorRight ) );
+                PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], cursorLeft, cursorRight ) );
                 ( arr[cursorLeft], arr[cursorRight] ) = ( arr[cursorRight], arr[cursorLeft] );
-                PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], cursorLeft, cursorRight, "Swap",
+                PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], cursorLeft, cursorRight, "Swap",
                     PerformanceQueue.Course.Count - 1 ) );
             }
 

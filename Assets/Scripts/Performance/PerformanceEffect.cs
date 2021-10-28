@@ -6,21 +6,20 @@ namespace Performance
 {
     public enum PerformanceEffect
     {
-        Swap,
+        SimpleSwap,
         SelectOne,
         SelectTwo,
-        NewMin,
+        SelectNewMin,
         ChangeSelection,
-        UnSelectOne,
         JumpOut,
         JumpIn,
-        SwapRelay,
+        RelaySwap,
         MergePick,
         MergeBack,
         MergeHistory,
-        SwapHeap,
+        HeapSwap,
         CodeLine,
         RadixPick,
-        RadixBack,
+        RadixBack
     }
 }

@@ -24,16 +24,7 @@ namespace UI
                 var anim = sliderMenu.GetComponent<Animator>();
                 if ( anim != null )
                 {
-                    if ( anim.GetBool( "Show" ) )
-                    {
-                        anim.SetBool( "Show", false );
-                        // GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = "<<";
-                    }
-                    else
-                    {
-                        anim.SetBool( "Show", true );
-                        // GameObject.Find( "SliderButton" ).GetComponentInChildren<Text>().text = ">>";
-                    }
+                    anim.SetBool( "Show", !anim.GetBool( "Show" ) );
                 }
             }
         }

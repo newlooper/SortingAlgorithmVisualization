@@ -8,14 +8,11 @@ namespace Sorting
 {
     public class Comb
     {
-        static int GetNextGap( int gap )
+        private static int GetNextGap( int gap )
         {
             // The "shrink factor", empirically shown to be 1.3
-            gap = ( gap * 10 ) / 13;
-            if ( gap < 1 )
-            {
-                return 1;
-            }
+            gap = gap * 10 / 13;
+            if ( gap < 1 ) return 1;
 
             return gap;
         }
@@ -43,10 +40,10 @@ namespace Sorting
                     PerformanceQueue.Course.Add( Step.CreateStepForSelectTwo( i, i + gap ) );
                     if ( arr[i] > arr[i + gap] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + gap ) );
                         // Swap
                         ( arr[i], arr[i + gap] ) = ( arr[i + gap], arr[i] );
-                        PerformanceQueue.Rewind.Add( Step.CreateStepForSwap( arr.Clone() as int[], i, i + gap, "Swap",
+                        PerformanceQueue.Rewind.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], i, i + gap, "Swap",
                             PerformanceQueue.Course.Count - 1 ) );
                         swapped = true;
                     }

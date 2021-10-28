@@ -2,8 +2,9 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-using System.Collections;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using Lean.Localization;
 using Performance;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -31,25 +32,25 @@ namespace UI
             GetComponent<Slider>().maxValue = PerformanceQueue.Rewind.Count;
             stepText.GetComponent<Text>().text = CubeController.rewindIndex +
                                                  " / " + PerformanceQueue.Rewind.Count + " <size=10>" +
-                                                 Lean.Localization.LeanLocalization.GetTranslationText( "UI.ProgressBar.Modification" ) +
+                                                 LeanLocalization.GetTranslationText( "UI.ProgressBar.Modification" ) +
                                                  "</size>";
 
             courseProgress.GetComponent<Slider>().value = CubeController.courseIndex;
             courseProgress.GetComponent<Slider>().maxValue = PerformanceQueue.Course.Count;
             courseStepText.GetComponent<Text>().text = CubeController.courseIndex +
                                                        " / " + PerformanceQueue.Course.Count + " <size=10>" +
-                                                       Lean.Localization.LeanLocalization.GetTranslationText( "UI.ProgressBar.TotalSteps" ) +
+                                                       LeanLocalization.GetTranslationText( "UI.ProgressBar.TotalSteps" ) +
                                                        "</size>";
         }
 
         public void OnDrag( PointerEventData eventData )
         {
-            StartCoroutine( PauseAt( (int)GetComponent<Slider>().value ) );
+            PauseAt( (int)GetComponent<Slider>().value );
         }
 
         public void OnPointerDown( PointerEventData eventData )
         {
-            StartCoroutine( PauseAt( (int)GetComponent<Slider>().value ) );
+            PauseAt( (int)GetComponent<Slider>().value );
         }
 
         public static void SetPlayerButtonStatus( int status )
@@ -67,18 +68,17 @@ namespace UI
             }
         }
 
-        public IEnumerator PauseAt( int rewindCursor )
+        public async void PauseAt( int rewindCursor )
         {
-            GameObject.Find( "PlayBar" ).GetComponent<PlayBar>().StopProducer();
             SetPlayerButtonStatus( 0 );
 
-            CubeController.canPlay = false;
+            CubeController.runLevel = 0;
             Time.timeScale = 10;
-            yield return new WaitUntil( () => !CubeController.inPlay );
+            await UniTask.WaitUntil( () => !CubeController.inPlay );
             Time.timeScale = 0;
-            CubeController.canPlay = true;
+            CubeController.runLevel = 2;
 
-            if ( PerformanceQueue.Rewind.Count == 0 ) yield break;
+            if ( PerformanceQueue.Rewind.Count == 0 ) return;
 
             CubeController.rewindIndex = rewindCursor;
 
@@ -97,10 +97,7 @@ namespace UI
                 Ending( step.Algorithm );
             }
 
-            if ( rewindCursor == 0 )
-            {
-                CubeController.courseIndex = 0;
-            }
+            if ( rewindCursor == 0 ) CubeController.courseIndex = 0;
         }
 
         private void Ending( string algorithm )

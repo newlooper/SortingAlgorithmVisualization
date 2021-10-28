@@ -2,9 +2,9 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-using System;
-using System.Collections;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using Performance.Actions;
 using Performance.ProducerConsumer;
 using UI;
 using UnityEngine;
@@ -12,23 +12,22 @@ using UnityEngine.UI;
 
 namespace Performance
 {
-    public partial class CubeController : MonoBehaviour
+    public class CubeController : MonoBehaviour
     {
-        private static         CubeController       _instance;
-        private static         Slider               _speed;
+        public static          Slider               speed;
         public static          bool                 inPlay;
-        public static          bool                 canPlay = true;
+        public static          int                  runLevel = 2;
         public static          bool                 inAction;
         public static          int                  courseIndex;
         public static          int                  rewindIndex;
         public static readonly FixedSizeQueue<Step> FixedBox = new FixedSizeQueue<Step>( 1 );
         public                 Transform            scaler;
-        private                int                  _value;
+
+        public int Value { get; private set; }
 
         private void Awake()
         {
-            _instance = this;
-            _speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
+            speed = GameObject.Find( "SliderSpeed" ).GetComponent<Slider>();
             scaler = transform.Find( "Cube" );
         }
 
@@ -43,28 +42,31 @@ namespace Performance
             if ( changeScale )
                 scaler.localScale = new Vector3( 1, value * Config.CubeScale, 1 );
             SetButtonText( value.ToString() );
-            _value = value;
+            Value = value;
         }
 
-        public static IEnumerator Play()
+        public static async UniTask Play()
         {
+            if ( inPlay ) return;
             inPlay = true;
             CodeDictionary.inPlay = true;
             GameManager.EnableButtons( false );
 
             var totalSteps = PerformanceQueue.Course.Count;
-            while ( canPlay && courseIndex < totalSteps )
-                if ( FixedBox.Dequeue( out var step ) )
+            while ( runLevel > 0 && courseIndex < totalSteps )
+            {
+                if ( FixedBox.Dequeue( out var step ) ) // consumer
                 {
                     inAction = true;
                     Interlocked.Increment( ref courseIndex );
-                    yield return Show( step );
+                    await Context.Execute( step );
                     inAction = false;
                 }
                 else
                 {
-                    yield return null;
+                    await UniTask.Yield();
                 }
+            }
 
             FixedBox.Dequeue( out var none );
             inPlay = false;
@@ -73,93 +75,84 @@ namespace Performance
             ProgressBar.SetPlayerButtonStatus( 0 );
         }
 
-        private static IEnumerator Show( Step step )
-        {
-            switch ( step.PerformanceEffect )
-            {
-                case PerformanceEffect.SelectTwo:
-                    yield return HighlightTwoWithIndex( step.Left, step.Right, step );
-                    break;
-                case PerformanceEffect.Swap:
-                    yield return SwapWithIndex( step.Left, step.Right, step );
-                    Interlocked.Increment( ref rewindIndex );
-                    break;
-                case PerformanceEffect.SelectOne:
-                    yield return HighlightOneWithIndex( step.Left, step );
-                    break;
-                case PerformanceEffect.UnSelectOne:
-                    yield return HighlightOneWithIndex( step.Left, step, 0 );
-                    break;
-                case PerformanceEffect.ChangeSelection:
-                    yield return HighlightSelectionWithIndex( step.Left, step );
-                    break;
-                case PerformanceEffect.NewMin:
-                    yield return HighlightChange( step.Left, step.Right, step );
-                    break;
-                case PerformanceEffect.JumpOut:
-                    yield return JumpOut( step.Left, step );
-                    break;
-                case PerformanceEffect.JumpIn:
-                    yield return JumpIn( step );
-                    break;
-                case PerformanceEffect.SwapRelay:
-                    yield return SwapRelay( step.Left, step.Right, step );
-                    Interlocked.Increment( ref rewindIndex );
-                    break;
-                case PerformanceEffect.MergePick:
-                    yield return SimpleMove( step.Left, step.Right, step );
-                    break;
-                case PerformanceEffect.MergeBack:
-                    yield return AuxiliaryBack( step );
-                    Interlocked.Increment( ref rewindIndex );
-                    break;
-                case PerformanceEffect.MergeHistory:
-                    Interlocked.Increment( ref rewindIndex );
-                    break;
-                case PerformanceEffect.SwapHeap:
-                    yield return SwapHeapWithIndex( step.Left, step.Right, step );
-                    Interlocked.Increment( ref rewindIndex );
-                    break;
-                case PerformanceEffect.CodeLine:
-                    CodeDictionary.AddMarkLine( step.CodeLineKey );
-                    yield return new WaitForSeconds( Config.DefaultDelay / _speed.value );
-                    CodeDictionary.RemoveMarkLine( step.CodeLineKey );
-                    break;
-                case PerformanceEffect.RadixPick:
-                    yield return MoveToBucket( step );
-                    break;
-                case PerformanceEffect.RadixBack:
-                    Interlocked.Increment( ref rewindIndex );
-                    yield return RadixBack( step );
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
         public static void SetPillarMaterial( GameObject go, Material mat )
         {
             go.transform.Find( "Cube" ).transform.Find( "Pillar" ).GetComponent<MeshRenderer>().material = mat;
         }
 
-        private static IEnumerator Move( GameObject from, Pace[] paces )
+        public static UniTask SwapTwoObjectPosition( GameObject one, GameObject two, Pace pace )
+        {
+            ////////////////////
+            // 绑定移动前的固定位置
+            var posOne = one.transform.position;
+            var posTwo = two.transform.position;
+
+            ////////////////////
+            /// 分路同时移动
+            return UniTask.WhenAll(
+                MoveInHigh( one, posTwo, pace ),
+                MoveInLow( two, posOne, pace )
+            );
+        }
+
+        private static UniTask MoveInHigh( GameObject mvObj, Vector3 target, Pace pace )
+        {
+            return Move( mvObj, new[]
+            {
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target, pace.MovingMaterial )
+            } );
+        }
+
+        private static UniTask MoveInLow( GameObject mvObj, Vector3 target, Pace pace )
+        {
+            return Move( mvObj, new[]
+            {
+                new Pace( mvObj.transform.position + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target + new Vector3( 0, 0, -Config.HorizontalGap ), pace.MovingMaterial ),
+                new Pace( target, pace.MovingMaterial )
+            } );
+        }
+
+        public static async UniTask Move( GameObject from, Pace[] paces )
         {
             foreach ( var pace in paces )
             {
-                if ( !canPlay ) yield break;
-                var speed = _speed.value;
-                if ( pace.Speed != 0 ) speed = pace.Speed;
+                if ( runLevel < 1 ) return;
 
                 SetPillarMaterial( from, pace.MovingMaterial );
 
-                while ( from.transform.position != pace.Target && canPlay )
+                while ( from.transform.position != pace.Target && runLevel >= 1 )
                 {
+                    var currentSpeed = pace.Speed == 0 ? speed.value : pace.Speed;
                     from.transform.position = Vector3.MoveTowards(
                         from.transform.position,
                         pace.Target,
-                        speed * Time.deltaTime );
-                    yield return null;
+                        currentSpeed * Time.deltaTime );
+                    await UniTask.Yield();
                 }
+            }
+        }
+
+        public static async UniTask MoveAndScale( GameObject cube, Vector3 target, Vector3 targetScale, Step step )
+        {
+            var startPos   = cube.transform.position;
+            var scaler     = cube.GetComponent<CubeController>().scaler;
+            var startScale = scaler.localScale;
+            var distance   = Vector3.Distance( startPos, target );
+            SetPillarMaterial( cube, step.Pace.MovingMaterial );
+
+            var i = 0f;
+            while ( i < 1f && runLevel > 0 )
+            {
+                var rate = speed.value / distance;
+                i += Time.deltaTime * rate;
+
+                cube.transform.position = Vector3.Lerp( startPos, target, i );
+                scaler.localScale = Vector3.Lerp( startScale, targetScale, i );
+
+                await UniTask.Yield();
             }
         }
     }

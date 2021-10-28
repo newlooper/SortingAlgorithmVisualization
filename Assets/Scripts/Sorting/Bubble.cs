@@ -21,10 +21,10 @@ namespace Sorting
 
                     if ( arr[j] > arr[j + 1] )
                     {
-                        PerformanceQueue.Course.Add( Step.CreateStepForSwap( arr.Clone() as int[], j, j + 1 ) );
+                        PerformanceQueue.Course.Add( Step.CreateStepForSimpleSwap( arr.Clone() as int[], j, j + 1 ) );
                         ( arr[j], arr[j + 1] ) = ( arr[j + 1], arr[j] );
                         PerformanceQueue.Rewind.Add(
-                            Step.CreateStepForSwap(
+                            Step.CreateStepForSimpleSwap(
                                 arr.Clone() as int[], j, j + 1, "Swap", PerformanceQueue.Course.Count - 1 ) );
                     }
                 }
